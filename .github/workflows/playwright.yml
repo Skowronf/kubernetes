@@ -8,12 +8,24 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
+      # 1. START BACKEND
+      - name: Start Spring Boot app
+        run: |
+          mvn spring-boot:run &
+
+      - name: Wait for app
+        run: |
+          until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/owners)" = "200" ]; do
+            echo "Waiting for app..."
+            sleep 5
+          done
+
+      # 2. UI TESTS
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -22,10 +34,10 @@ jobs:
         working-directory: ui-tests
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright
         working-directory: ui-tests
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
+      - name: Run tests
         working-directory: ui-tests
         run: npm test
