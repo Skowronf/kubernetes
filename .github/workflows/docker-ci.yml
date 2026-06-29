@@ -19,6 +19,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
 
