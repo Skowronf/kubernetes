@@ -1,17 +1,84 @@
-name: Hello CI
+name: Full CI - Build, API & UI Tests
 
 on:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  hello:
+  test-pipeline:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - run: pwd
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
 
-      - run: ls -la
+      # =========================
+      # BUILD APP
+      # =========================
+      - name: Build application (skip tests)
+        run: ./mvnw clean package -DskipTests
 
-      - run: java -version
+      # =========================
+      # START APP
+      # =========================
+      - name: Start Spring Boot app
+        run: |
+          ./mvnw spring-boot:run > app.log 2>&1 &
+          echo $! > app.pid
+
+      # =========================
+      # WAIT FOR APP
+      # =========================
+      - name: Wait for application to start
+        run: |
+          echo "Waiting for app..."
+          for i in {1..60}; do
+            if curl --fail http://localhost:8080; then
+              echo "App is up!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App failed to start"
+          exit 1
+
+      # =========================
+      # API TESTS
+      # =========================
+      - name: Run API tests
+        run: |
+          ./mvnw test -Dtest="*ApiTest"
+
+      # =========================
+      # UI TESTS
+      # =========================
+      - name: Run UI tests
+        run: |
+          ./mvnw test -Dtest="*UiTest"
+
+      # =========================
+      # CLEANUP APP
+      # =========================
+      - name: Stop application
+        if: always()
+        run: |
+          kill $(cat app.pid) || true
+
+      # =========================
+      # ARTIFACTS
+      # =========================
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-logs
+          path: app.log
