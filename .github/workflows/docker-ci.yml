@@ -77,6 +77,9 @@ jobs:
       - name: Show running services
         run: docker compose ps
 
+      - name: Show application logs
+        run: docker compose logs petclinic
+
       - name: Wait for application
         run: |
           timeout 60 bash -c 'until curl -fs http://localhost:8080 > /dev/null; do sleep 2; done'
