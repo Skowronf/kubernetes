@@ -26,6 +26,15 @@ jobs:
       - name: Build Docker image
         run: docker build -t petclinic-app .
 
+      - name: Save Docker image (artifact for next job)
+        run: docker save petclinic-app > image.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: petclinic-image
+          path: image.tar
+
 
   e2e-tests:
     runs-on: ubuntu-latest
