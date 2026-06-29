@@ -74,18 +74,27 @@ jobs:
       - name: Start environment (Docker Compose)
         run: docker compose up -d
 
-      - name: Show running services
-        run: docker compose ps
-
-      - name: Show application logs
-        run: docker compose logs petclinic
-
       - name: Wait for application
         run: |
           timeout 60 bash -c 'until curl -fs http://localhost:8080 > /dev/null; do sleep 2; done'
 
       - name: Smoke test
         run: curl -f http://localhost:8080
+
+      - name: Show running services
+        run: docker compose ps
+
+      - name: Show application logs
+        run: docker compose logs petclinic
+
+      - name: Show containers
+        run: docker ps -a
+
+      - name: Show raw Docker logs
+        run: |
+          CONTAINER_ID=$(docker compose ps -q petclinic)
+          echo "Container: $CONTAINER_ID"
+          docker logs "$CONTAINER_ID"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
