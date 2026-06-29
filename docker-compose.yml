@@ -1,6 +1,6 @@
 services:
   petclinic:
-    image: ghcr.io/skowronf/enterprise-platform:${TAG}
+    image: ${IMAGE}
     ports:
       - "8080:8080"
     environment:

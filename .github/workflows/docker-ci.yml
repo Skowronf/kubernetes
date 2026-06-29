@@ -78,7 +78,7 @@ jobs:
 
       - name: Start environment (Docker Compose)
         env:
-          TAG: ${{ needs.build-and-push.outputs.image }}
+          IMAGE: ${{ needs.build-and-push.outputs.image }}
         run: docker compose up -d
 
       - name: Wait for application
