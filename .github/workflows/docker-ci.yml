@@ -76,15 +76,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull Docker image
-        run: docker pull "${{ needs.build-and-push.outputs.image }}"
-
-      - name: Run container
-        run: |
-          docker run -d \
-            -p 8080:8080 \
-            --name petclinic \
-            "${{ needs.build-and-push.outputs.image }}"
+      - name: Start environment (Docker Compose)
+        env:
+          TAG: ${{ needs.build-and-push.outputs.image }}
+        run: docker compose up -d
 
       - name: Wait for application
         run: |
@@ -117,12 +112,10 @@ jobs:
           name: playwright-report
           path: ui-tests/playwright-report
 
-      - name: Show container logs
+      - name: Collect logs on failure
         if: failure()
-        run: docker logs petclinic
+        run: docker compose logs
 
       - name: Cleanup
         if: always()
-        run: |
-          docker stop petclinic || true
-          docker rm petclinic || true
+        run: docker compose down -v
