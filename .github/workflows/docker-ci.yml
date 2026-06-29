@@ -1,17 +1,25 @@
-name: PetClinic Docker CI
+name: PetClinic E2E Pipeline
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  smoke-test:
+  e2e-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # -------------------------
+      # 1. CODE CHECKOUT
+      # -------------------------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -------------------------
+      # 2. JAVA BUILD (BACKEND)
+      # -------------------------
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -21,23 +29,58 @@ jobs:
       - name: Build JAR
         run: mvn clean package -DskipTests
 
+      # -------------------------
+      # 3. DOCKER RUNTIME
+      # -------------------------
       - name: Build Docker image
         run: docker build -t petclinic-app .
 
       - name: Run container
         run: docker run -d -p 8080:8080 --name petclinic petclinic-app
 
-      - name: Wait for app
+      - name: Wait for application
         run: |
           timeout 60 bash -c 'until curl -f http://localhost:8080; do sleep 2; done'
 
+      # -------------------------
+      # 4. SMOKE TEST
+      # -------------------------
       - name: Smoke test
         run: curl -f http://localhost:8080
 
-      - name: Cleanup
+      # -------------------------
+      # 5. NODE + PLAYWRIGHT
+      # -------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install UI test dependencies
+        working-directory: ui-tests
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ui-tests
+        run: npx playwright install --with-deps
+
+      # -------------------------
+      # 6. UI TESTS
+      # -------------------------
+      - name: Run Playwright tests
+        working-directory: ui-tests
+        run: npm test
+
+      # -------------------------
+      # 7. CLEANUP (ALWAYS)
+      # -------------------------
+      - name: Stop and remove container
         if: always()
         run: docker stop petclinic && docker rm petclinic
 
-      - name: Show logs on failure
+      # -------------------------
+      # 8. DEBUG ON FAILURE
+      # -------------------------
+      - name: Show logs if failed
         if: failure()
         run: docker logs petclinic
