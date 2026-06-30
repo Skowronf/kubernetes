@@ -25,3 +25,13 @@ spec:
               value: petclinic
             - name: POSTGRES_PASSWORD
               value: petclinic
+
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - pg_isready -U petclinic
+        initialDelaySeconds: 5
+        periodSeconds: 5
+
