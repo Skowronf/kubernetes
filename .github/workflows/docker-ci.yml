@@ -118,7 +118,7 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: ui-tests
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
         working-directory: ui-tests
