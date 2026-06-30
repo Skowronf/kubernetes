@@ -161,9 +161,9 @@ jobs:
 
       - name: Check pod logs
         run: |
-          sleep 20
+          sleep 30
           kubectl logs deployment/petclinic -n petclinic  
-          kubectl logs -n petclinic -l app=petclinic --tail=200
+          kubectl logs -n petclinic -l app=petclinic --tail=400
 
 
       - name: Smoke test
