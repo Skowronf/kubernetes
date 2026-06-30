@@ -29,6 +29,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: maven
 
       - name: Build application
         run: mvn clean package -DskipTests
