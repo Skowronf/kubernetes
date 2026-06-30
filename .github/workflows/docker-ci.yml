@@ -149,7 +149,14 @@ jobs:
           
       - name: Check pod logs
         run: |
-          kubectl logs deployment/petclinic -n petclinic    
+          kubectl logs deployment/petclinic -n petclinic  
+          kubectl logs -n petclinic -l app=petclinic --tail=200
+
+      - name: Print logs
+        run: |
+          POD=$(kubectl get pod -n petclinic -l app=petclinic -o jsonpath='{.items[0].metadata.name}')
+          echo $POD
+          kubectl logs $POD -n petclinic    
 
       - name: Check service endpoints
         run: |
