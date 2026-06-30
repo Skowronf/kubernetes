@@ -146,11 +146,7 @@ jobs:
         run: |
           kubectl port-forward svc/petclinic -n petclinic 8080:8080 &
           sleep 5
-          
-      - name: Check pod logs
-        run: |
-          kubectl logs deployment/petclinic -n petclinic  
-          kubectl logs -n petclinic -l app=petclinic --tail=200
+        
 
       - name: Print logs
         run: |
@@ -162,6 +158,12 @@ jobs:
         run: |
           kubectl get svc -n petclinic
           kubectl get endpoints -n petclinic    
+
+      - name: Check pod logs
+        run: |
+          sleep 20
+          kubectl logs deployment/petclinic -n petclinic  
+          kubectl logs -n petclinic -l app=petclinic --tail=200
 
 
       - name: Smoke test
