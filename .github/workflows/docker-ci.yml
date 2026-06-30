@@ -165,7 +165,6 @@ jobs:
           kubectl logs deployment/petclinic -n petclinic  
           kubectl logs -n petclinic -l app=petclinic --tail=400
 
-
       - name: Smoke test
         run: curl -f http://localhost:8080
 
