@@ -116,6 +116,12 @@ jobs:
         run: |
           docker pull ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
           kind load docker-image ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }} --name petclinic-ci
+
+      - name: Show workspace
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 3 -type f
           
       - name: Inject image tag into manifest (so it can be passed to k8s yaml files)
         run: |
