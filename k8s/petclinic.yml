@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: petclinic
-          image: ghcr.io/skowronf/enterprise-platform:sha-${{ github.sha }}
+          image: ghcr.io/skowronf/enterprise-platform:REPLACE_ME
           ports:
             - containerPort: 8080
           env:
