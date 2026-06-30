@@ -19,6 +19,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: postgres
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/petclinic
             - name: SPRING_DATASOURCE_USERNAME
