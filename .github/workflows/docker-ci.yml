@@ -89,41 +89,65 @@ jobs:
 
     env:
       TAG: sha-${{ github.sha }}
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Login to GHCR
-        uses: docker/login-action@v4
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v5
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          version: v1.29.0
 
-      - name: Start environment (Docker Compose)
-        run: docker compose up -d
-
-      - name: Wait for application
+      - name: Install kind
         run: |
-          timeout 60 bash -c 'until curl -fs http://localhost:8080 > /dev/null; do sleep 2; done'
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+          kind version
+
+      - name: Create kind cluster
+        run: |
+          kind create cluster --name petclinic-ci
+          kind export kubeconfig --name petclinic-ci > $KUBECONFIG
+          kubectl cluster-info
+
+      - name: Load image into kind - replaces registry pull
+        run: |
+          docker pull ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          kind load docker-image ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }} --name petclinic-ci
+
+
+      - name: Deploy PetClinic (K8s)
+        run: |
+          kubectl create namespace petclinic
+
+          kubectl apply -n petclinic -f k8s/
+
+          kubectl get pods -n petclinic
+
+
+      - name: Wait for deployment
+        run: |
+          kubectl rollout status deployment/petclinic -n petclinic --timeout=120s
+
+
+      - name: Port forward app
+        run: |
+          kubectl port-forward svc/petclinic -n petclinic 8080:8080 &
+          sleep 5
+
 
       - name: Smoke test
         run: curl -f http://localhost:8080
 
-      - name: Show running services
-        run: docker compose ps
 
-      - name: Show application logs
-        run: docker compose logs petclinic
-
-      - name: Show containers
-        run: docker ps -a
-
-      - name: Show raw Docker logs
+      - name: Show cluster state
+        if: always()
         run: |
-          CONTAINER_ID=$(docker compose ps -q petclinic)
-          echo "Container: $CONTAINER_ID"
-          docker logs "$CONTAINER_ID"
+          kubectl get all -n petclinic
+          kubectl describe pods -n petclinic
+
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -141,8 +165,6 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('ui-tests/package-lock.json') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
 
       - name: Install Playwright browsers
         working-directory: ui-tests
@@ -159,10 +181,7 @@ jobs:
           name: playwright-report
           path: ui-tests/playwright-report
 
-      - name: Collect logs on failure
-        if: failure()
-        run: docker compose logs
-
-      - name: Cleanup
+      - name: Cleanup kind cluster
         if: always()
-        run: docker compose down -v
+        run: |
+          kind delete cluster --name petclinic-ci
