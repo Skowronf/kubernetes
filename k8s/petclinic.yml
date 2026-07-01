@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: petclinic
-          image: ghcr.io/skowronf/enterprise-platform:REPLACE_ME
+          image: petclinic:ci
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
@@ -27,3 +28,9 @@ spec:
               value: petclinic
             - name: SPRING_DATASOURCE_PASSWORD
               value: petclinic
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
