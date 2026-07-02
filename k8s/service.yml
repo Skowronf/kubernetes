@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: petclinic
   namespace: petclinic
+  labels:
+    app: petclinic
 spec:
   selector:
     app: petclinic
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: 8080
   type: ClusterIP

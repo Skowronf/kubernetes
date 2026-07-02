@@ -13,3 +13,9 @@ helm upgrade --install prometheus \
   prometheus-community/kube-prometheus-stack \
   -n observability \
   --wait
+
+echo "Prometheus Port forwarding 9090:9090"
+kubectl port-forward \
+svc/prometheus-kube-prometheus-prometheus \
+9090:9090  \
+-n observability

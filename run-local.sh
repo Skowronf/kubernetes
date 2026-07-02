@@ -51,7 +51,10 @@ npx playwright test --shard=3/3
 
 kill $PF_PID || true
 
-#echo "Cleanup"
-#kind delete cluster --name petclinic-ci
+echo "Prometheus Port forwarding 9090:9090"
+kubectl port-forward \
+svc/prometheus-kube-prometheus-prometheus \
+9090:9090 \
+-n observability
 
 echo "✅ DONE"
