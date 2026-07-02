@@ -51,7 +51,7 @@ npx playwright test --shard=3/3
 
 kill $PF_PID || true
 
-echo "Cleanup"
-kind delete cluster --name petclinic-ci
+#echo "Cleanup"
+#kind delete cluster --name petclinic-ci
 
 echo "✅ DONE"
