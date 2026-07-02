@@ -7,5 +7,6 @@ set -euo pipefail
 ./scripts/port-forward.sh
 ./scripts/smoke-test.sh
 ./scripts/e2e.sh
+./scripts/observability/install.sh
 
 echo "Done"
