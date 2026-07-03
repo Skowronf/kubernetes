@@ -1,15 +1,16 @@
 apiVersion: v1
-kind: Service
+kind: Service # We already have Pod with application
+# Service makes sure that when IP of this Pod changes, we can still connect via stale name (DNS)
 metadata:
-  name: petclinic
+  name: petclinic # set DNS name
   namespace: petclinic
   labels:
     app: petclinic
 spec:
   selector:
-    app: petclinic
+    app: petclinic # Find all Pods with this label (set in Deployment)
   ports:
     - name: http
       port: 8080
       targetPort: 8080
-  type: ClusterIP
+  type: ClusterIP # Service is accessible only inside cluster (No public IP) - default
