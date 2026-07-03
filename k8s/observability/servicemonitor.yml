@@ -1,18 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: ServiceMonitor # custom resource provided by Prometheus Operator, tells which Service to monitor and what metrics are exposed
 metadata:
-  name: petclinic
-  namespace: observability
+  name: backend-monitor
+  namespace: observability # does have its own namespace, but does not mean it cannot monitor others
   labels:
-    release: prometheus
+    release: prometheus # matches the Helm release name
 spec:
   selector:
     matchLabels:
-      app: petclinic
+      app: petclinic # targets Kubernetes Services with matching Labels
   namespaceSelector:
     matchNames:
-      - petclinic
-  endpoints:
+      - petclinic # Prometheus is only allowed to discover services from this namespace (without it only its own namespace is allowed)
+  endpoints: # refers to application Service port to scrape (it's NOT a container port)
     - port: http
       path: /actuator/prometheus
       interval: 15s
