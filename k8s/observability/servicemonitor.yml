@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor # custom resource provided by Prometheus Operator, tells which Service to monitor and what metrics are exposed
 metadata:
-  name: backend-monitor
+  name: petclinic
   namespace: observability # does have its own namespace, but does not mean it cannot monitor others
   labels:
     release: prometheus # matches the Helm release name
