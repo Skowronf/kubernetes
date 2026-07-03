@@ -1,0 +1,20 @@
+adminUser: admin
+
+adminPassword: admin
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+
+    datasources:
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-kube-prometheus-prometheus.observability:9090
+        isDefault: true
+        editable: false
+
+grafana.ini:
+  users:
+    default_theme: dark

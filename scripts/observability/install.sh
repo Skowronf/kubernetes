@@ -18,12 +18,32 @@ echo "Installing kube-prometheus-stack"
 helm upgrade --install prometheus \
   prometheus-community/kube-prometheus-stack \
   -n observability \
+  -f k8s/observability/prometheus-values.yml \
   --wait
-
 
 echo "Prometheus Port forwarding 9090:9090"
 # create a local tunnel from localhost:9090 to the prometheus service running inside cluster
 kubectl port-forward \
-svc/prometheus-kube-prometheus-prometheus \
-9090:9090  \
--n observability
+  -n observability \
+  svc/prometheus-kube-prometheus-prometheus \
+  9090:9090 >/dev/null 2>&1 &
+
+PROM_PID=$!
+
+echo "Adding grafana Helm repo"
+helm repo add grafana https://grafana.github.io/helm-charts
+
+echo "Installing grafana in observability namespace"
+helm install grafana grafana/grafana \
+  --namespace observability \
+  -f k8s/observability/grafana-monitor.yml
+
+echo "Starting Grafana port-forward..."
+kubectl port-forward \
+  -n observability \
+  svc/grafana \
+  3000:80 >/dev/null 2>&1 &
+
+GRAFANA_PID=$!
+
+wait
