@@ -1,17 +1,17 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment # Makes a Pod with a label, then Service can find this pod using selector with same label
 metadata:
   name: postgres
-  namespace: petclinic
+  namespace: petclinic # Pod will be made in same namespace as application
 spec:
-  replicas: 1
+  replicas: 1 # Kubernetes will keep up one pod running, if it dies new one will be created
   selector:
-    matchLabels:
+    matchLabels: # Deployment finds Pod with this label, must be the same as label in template
       app: postgres
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres # Each new Pod will get this label, used by Deployment and Service
     spec:
       containers:
         - name: postgres
@@ -27,7 +27,7 @@ spec:
               value: petclinic
 
 
-          readinessProbe:
+          readinessProbe: # If postgres is not ready, Service won't send traffic
             exec:
               command:
                 - sh
@@ -36,7 +36,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
 
-          livenessProbe:
+          livenessProbe: # Check if postgres is alive, if not restart container
             exec:
               command:
                 - sh

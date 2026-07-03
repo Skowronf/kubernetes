@@ -1,4 +1,4 @@
-apiVersion: v1
-kind: Namespace
+apiVersion: v1 # Kubernetes API
+kind: Namespace # Logical space separating resources
 metadata:
   name: petclinic

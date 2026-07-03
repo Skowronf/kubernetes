@@ -1,19 +1,19 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment # Makes a Pod with a label, then Service can find this pod using selector with same label
 metadata:
   name: petclinic
-  namespace: petclinic
+  namespace: petclinic # Will be made in this namespace
 spec:
-  replicas: 1
+  replicas: 1 # Kubernetes will keep up one pod running, if it dies new one will be created
   selector:
-    matchLabels:
+    matchLabels: # Deployment finds Pod with this label, must be the same as label in template
       app: petclinic
   template:
     metadata:
       labels:
-        app: petclinic
+        app: petclinic # Each new Pod will get this label, used by Deployment and Service
     spec:
-      initContainers:
+      initContainers: # Run before main container, main container won't start until this one ends successfully
         - name: wait-for-postgres
           image: postgres:16
           env:
@@ -35,11 +35,11 @@ spec:
       containers:
         - name: petclinic
           image: petclinic:ci
-          imagePullPolicy: Never
+          imagePullPolicy: Never # Don't pull image from registry ( I have it locally )
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_PROFILES_ACTIVE
+            - name: SPRING_PROFILES_ACTIVE # Application is run with postgres
               value: postgres
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/petclinic
@@ -47,7 +47,7 @@ spec:
               value: petclinic
             - name: SPRING_DATASOURCE_PASSWORD
               value: petclinic
-          readinessProbe:
+          readinessProbe: # Make sure application is ready for traffic, Service won't use pod until it is
             httpGet:
               path: /
               port: 8080
