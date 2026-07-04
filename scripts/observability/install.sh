@@ -21,6 +21,9 @@ helm upgrade --install prometheus \
   -f k8s/observability/prometheus-values.yml \
   --wait
 
+echo "Applying PetClinic ServiceMonitor"
+kubectl apply -f k8s/observability/servicemonitor.yml
+
 echo "Prometheus Port forwarding 9090:9090"
 # create a local tunnel from localhost:9090 to the prometheus service running inside cluster
 kubectl port-forward \
