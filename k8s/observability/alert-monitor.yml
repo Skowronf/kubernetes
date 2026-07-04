@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: petclinic-alerts
+  namespace: observability
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: petclinic.rules
+      rules:
+
+        # Pod DOWN
+        - alert: PetclinicPodDown
+          expr: up{job=~".*petclinic.*"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Petclinic pod is down"
+            description: "Target is unreachable for more than 1 minute"
+
+        # High 5xx error rate (>5%)
+        - alert: PetclinicHigh5xxRate
+          expr: |
+            (
+              sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+              /
+              sum(rate(http_server_requests_seconds_count[5m]))
+            ) > 0.05
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High 5xx error rate (>5%)"
+            description: "More than 5% of requests are failing with 5xx errors"
