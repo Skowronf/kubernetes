@@ -16,9 +16,9 @@ spec:
       initContainers: # Run before main container, main container won't start until this one ends successfully
         - name: wait-for-postgres
           image: postgres:16
-          env:
-            - name: PGPASSWORD
-              value: petclinic
+          envFrom:
+            - secretRef: # use Secret to pass credentials
+                name: petclinic-secret
           command:
             - sh
             - -c
@@ -38,15 +38,9 @@ spec:
           imagePullPolicy: Never # Don't pull image from registry ( I have it locally )
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_PROFILES_ACTIVE # Application is run with postgres
-              value: postgres
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/petclinic
-            - name: SPRING_DATASOURCE_USERNAME
-              value: petclinic
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: petclinic
+          envFrom:
+            - configMapRef: # Use configMap for configuration storage
+                name: petclinic-config
           readinessProbe: # Make sure application is ready for traffic, Service won't use pod until it is
             httpGet:
               path: /
