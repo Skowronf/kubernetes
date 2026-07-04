@@ -1,11 +1,9 @@
 adminUser: admin
-
 adminPassword: admin
 
 datasources:
   datasources.yaml:
     apiVersion: 1
-
     datasources:
       - name: Prometheus
         uid: prometheus
@@ -18,3 +16,25 @@ datasources:
 grafana.ini:
   users:
     default_theme: dark
+
+  dashboards:
+    default_home_dashboard_path: /var/lib/grafana/dashboards
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards
+
+extraConfigmapMounts:
+  - name: petclinic-dashboard
+    configMap: petclinic-dashboard
+    mountPath: /var/lib/grafana/dashboards
+    readOnly: true

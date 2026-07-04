@@ -41,6 +41,9 @@ helm install grafana grafana/grafana \
   --namespace observability \
   -f k8s/observability/grafana-monitor.yml
 
+echo "Adding grafana dashboard"
+kubectl apply -f k8s/observability/petclinic-dashboard.yml
+
 echo "Starting Grafana port-forward..."
 kubectl port-forward \
   -n observability \
