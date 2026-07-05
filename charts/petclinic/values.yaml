@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 2
 image: # parameters from docker build
   repository: petclinic
   tag: ci # NOW TO PARAMETRIZE
