@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service # We already have Pod with db
+  # Service makes sure that when IP of this Pod changes, we can still connect via stale name (DNS)
+metadata:
+  name: postgres # set DNS name
+  namespace: petclinic
+spec:
+  selector:
+    app: postgres # Find all Pods with this label (set in Deployment)
+  ports:
+    - port: 5432
+      targetPort: 5432
