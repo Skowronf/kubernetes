@@ -4,7 +4,7 @@ metadata:
   name: petclinic
   namespace: petclinic # Will be made in this namespace
 spec:
-  replicas: 1 # Kubernetes will keep up one pod running, if it dies new one will be created
+  replicas: {{ .Values.replicaCount }} # Kubernetes will keep that many pods running, if they die, they will be created again
   selector:
     matchLabels: # Deployment finds Pod with this label, must be the same as label in template
       app: petclinic
@@ -34,7 +34,7 @@ spec:
               done
       containers:
         - name: petclinic
-          image: petclinic:ci
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: Never # Don't pull image from registry ( I have it locally )
           ports:
             - containerPort: 8080
