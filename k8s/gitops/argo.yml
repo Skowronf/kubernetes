@@ -14,7 +14,7 @@ spec:
 
     helm:
       valueFiles:
-        - values.yaml
+        - values.yaml # Path to values inside charts/petclinic
 
   destination:
     server: https://kubernetes.default.svc
