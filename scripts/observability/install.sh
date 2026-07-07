@@ -55,4 +55,20 @@ kubectl port-forward \
 
 GRAFANA_PID=$!
 
+echo "Installing loki in observability namespace"
+helm install loki grafana/loki \
+  --namespace observability \
+  -f k8s/observability/loki-values.yml # Need to use manifest to specify I want use local storage instead of cloud
+
+
+echo "Installing Promtail in observability for logs reading and transfer to loki"
+helm install promtail grafana/promtail \
+  -n observability \
+  --set config.clients[0].url=http://loki.observability.svc.cluster.local:3100/loki/api/v1/push
+
+echo "kubectl port-forward svc/loki 3100:3100 -n observability"
+kubectl port-forward svc/loki 3100:3100 -n observability>/dev/null 2>&1 &
+
+LOKI_PID=$!
+
 wait
