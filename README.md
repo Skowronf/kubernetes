@@ -13,7 +13,7 @@ This platform simulates a real-world internal developer platform:
 - **Application Layer** → Spring PetClinic
 - **Platform Layer** → Kubernetes + Helm
 - **Delivery Layer** → GitOps (ArgoCD)
-- **Observability Layer** → Prometheus + Grafana + Loki #TODO
+- **Observability Layer** → Prometheus + Grafana + Loki
 - **Automation Layer** → Bash scripts + CI/CD ready structure #TODO
 
 ---
@@ -43,14 +43,14 @@ All major design decisions are documented in ADR format:
 ### Observability Stack
 - Metrics → Prometheus
 - Dashboards → Grafana
-- Logs → Loki #TODO
+- Logs → Loki
 
 ##  Observability Flow
 
 This platform implements observability:
 
 Metrics → Prometheus → Grafana  
-Logs → Loki → Grafana  #TODO
+Logs → Loki → Grafana
 
 ## Environments #TODO
 
