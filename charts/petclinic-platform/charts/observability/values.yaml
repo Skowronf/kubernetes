@@ -1,0 +1,187 @@
+kube-prometheus-stack:
+
+  grafana:
+    enabled: false
+
+  prometheus:
+
+    prometheusSpec:
+
+      serviceMonitorSelector:
+        matchLabels:
+          app: petclinic
+
+      serviceMonitorNamespaceSelector: {}
+
+
+loki:
+
+  enabled: true
+
+  deploymentMode: SingleBinary
+
+  singleBinary:
+    replicas: 1
+
+  read:
+    replicas: 0
+
+  write:
+    replicas: 0
+
+  backend:
+    replicas: 0
+
+  loki:
+
+    auth_enabled: false
+
+    commonConfig:
+      replication_factor: 1
+
+    schemaConfig:
+
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+
+          index:
+            prefix: index_
+            period: 24h
+
+    storage:
+
+      type: filesystem
+
+      bucketNames:
+        chunks: chunks
+        ruler: ruler
+        admin: admin
+
+
+  minio:
+    enabled: false
+
+
+
+
+promtail:
+
+  enabled: true
+
+  config:
+
+    clients:
+
+      - url: http://observability-loki.observability:3100/loki/api/v1/push
+
+
+    snippets:
+
+      extraScrapeConfigs: |
+
+        - job_name: kubernetes-pods-petclinic
+
+          pipeline_stages:
+            - cri: {}
+
+          kubernetes_sd_configs:
+
+            - role: pod
+
+
+          relabel_configs:
+
+            - source_labels:
+                - __meta_kubernetes_namespace
+              action: keep
+              regex: petclinic
+
+
+            - source_labels:
+                - __meta_kubernetes_pod_name
+              target_label: pod
+
+
+            - source_labels:
+                - __meta_kubernetes_pod_container_name
+              target_label: container
+
+
+            - source_labels:
+                - __meta_kubernetes_namespace
+              target_label: namespace
+
+
+            - replacement: /var/log/pods/*$1/*.log
+              separator: /
+              source_labels:
+
+                - __meta_kubernetes_pod_uid
+
+                - __meta_kubernetes_pod_container_name
+
+              target_label: __path__
+
+
+  resources:
+
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+
+
+grafana:
+  adminUser: admin
+  adminPassword: admin
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          uid: prometheus
+          type: prometheus
+          access: proxy
+          url: http://observability-kube-prometh-prometheus.observability:9090
+          isDefault: true
+          editable: false
+        - name: Loki
+          uid: loki
+          type: loki
+          access: proxy
+          url: http://observability-loki.observability:3100
+          editable: false
+
+  grafana.ini:
+    users:
+      default_theme: dark
+
+    dashboards:
+      default_home_dashboard_path: /var/lib/grafana/dashboards
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ""
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards
+
+  extraConfigmapMounts:
+    - name: petclinic-dashboard
+      configMap: petclinic-dashboard
+      mountPath: /var/lib/grafana/dashboards
+      readOnly: true

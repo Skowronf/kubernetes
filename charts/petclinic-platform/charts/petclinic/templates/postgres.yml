@@ -34,7 +34,7 @@ spec:
                 - -c
                 - pg_isready -U petclinic
             initialDelaySeconds: 5
-            periodSeconds: 5
+            periodSeconds: 30
 
           livenessProbe: # Check if postgres is alive, if not restart container
             exec:
@@ -43,7 +43,7 @@ spec:
                 - -c
                 - pg_isready -U petclinic
             initialDelaySeconds: 20
-            periodSeconds: 10
+            periodSeconds: 30
 
           volumeMounts:
             - name: postgres-storage

@@ -10,11 +10,11 @@ spec:
   source:
     repoURL: https://github.com/Skowronf/enterprise-platform
     targetRevision: main
-    path: charts/petclinic  # Path to Helm application folder
+    path: charts/petclinic-platform/charts/petclinic
 
     helm:
       valueFiles:
-        - values.yaml # Path to values inside charts/petclinic
+        - values.yaml
 
   destination:
     server: https://kubernetes.default.svc
@@ -24,5 +24,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+
     syncOptions:
       - CreateNamespace=true

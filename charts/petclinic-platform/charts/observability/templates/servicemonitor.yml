@@ -4,7 +4,7 @@ metadata:
   name: petclinic
   namespace: observability # does have its own namespace, but does not mean it cannot monitor others
   labels:
-    release: prometheus # matches the Helm release name
+    app: petclinic # matches the service monitor selector for prometheus in values
 spec:
   selector:
     matchLabels:
@@ -15,4 +15,4 @@ spec:
   endpoints: # refers to application Service port to scrape (it's NOT a container port)
     - port: http
       path: /actuator/prometheus
-      interval: 15s
+      interval: 30s
