@@ -122,10 +122,6 @@ jobs:
           pwd
           ls -la
           find . -maxdepth 3 -type f
-          
-      - name: Inject image tag into manifest (so it can be passed to k8s yaml files)
-        run: |
-          sed -i "s|REPLACE_ME|sha-${{ github.sha }}|g" k8s/petclinic.yml
 
 
       - name: Deploy PetClinic (K8s)
