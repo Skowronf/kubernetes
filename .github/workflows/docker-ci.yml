@@ -126,8 +126,7 @@ jobs:
 
       - name: Deploy PetClinic (K8s)
         run: |
-          kubectl create namespace petclinic
-          
+      
           cd charts/petclinic-platform/charts/petclinic/
           
           helm dependency update
