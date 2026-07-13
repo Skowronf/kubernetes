@@ -128,7 +128,7 @@ jobs:
         run: |
           kubectl create namespace petclinic
           
-          cd charts/petclinic-platform/petclinic
+          cd charts/petclinic-platform/charts/petclinic/
           
           helm dependency update
           
