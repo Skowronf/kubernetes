@@ -135,6 +135,9 @@ jobs:
           -n petclinic \
           --create-namespace \
           -f values.yaml \
+          --set image.repository=${REGISTRY}/${IMAGE_NAME} \
+          --set image.tag=${TAG} \
+          --set image.pullPolicy=IfNotPresent \
           --wait \
           --timeout 10m
 
