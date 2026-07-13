@@ -1,4 +1,4 @@
-name: PetClinic E2E Pipeline
+name: Platform E2E Pipeline
 
 on:
   push:
@@ -131,8 +131,15 @@ jobs:
       - name: Deploy PetClinic (K8s)
         run: |
           kubectl create namespace petclinic
-
-          kubectl apply -n petclinic -f k8s/
+          
+          helm dependency update
+          
+          helm upgrade --install petclinic . \
+          -n petclinic \
+          --create-namespace \
+          -f values.yaml \
+          --wait \
+          --timeout 10m
 
           kubectl get pods -n petclinic
 
