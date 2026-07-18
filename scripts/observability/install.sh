@@ -1,75 +1,31 @@
 #!/usr/bin/env bash
-# its a script to be run with bash
 
 set -euo pipefail
-# if any commend end with error, pipeline also fails
 
-echo "Adding Prometheus Helm repo"
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+echo "Creating argocd namespace"
 
-echo "Creating namespace: observability"
-# create namespace yaml observability locally (do not sent to cluster), show me yaml, then apply
-# using, kubectl create namespace observability,  might get error if namespace already exists
-kubectl create namespace observability --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace argocd
 
-echo "Installing kube-prometheus-stack"
-# install release or update if it does not exist and wait until its ready
-helm upgrade --install prometheus \
-  prometheus-community/kube-prometheus-stack \
-  -n observability \
-  -f k8s/observability/prometheus-values.yml \
-  --wait
+echo "Installing Argo CD"
 
-echo "Applying PetClinic ServiceMonitor"
-kubectl apply -f k8s/observability/servicemonitor.yml
+kubectl apply \
+  --server-side \
+  -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-echo "Applying Prometheus AlertMonitor"
-kubectl apply -f k8s/observability/alert-monitor.yml
+echo "Waiting for Argo CD"
 
-echo "Prometheus Port forwarding 9090:9090"
-# create a local tunnel from localhost:9090 to the prometheus service running inside cluster
-kubectl port-forward \
-  -n observability \
-  svc/prometheus-kube-prometheus-prometheus \
-  9090:9090 >/dev/null 2>&1 &
+kubectl wait \
+  --for=condition=available \
+  deployment/argocd-server \
+  -n argocd \
+  --timeout=180s
 
-PROM_PID=$!
+echo "Argo CD admin password:"
 
-echo "Adding grafana Helm repo"
-helm repo add grafana https://grafana.github.io/helm-charts
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d
 
-echo "Installing grafana in observability namespace"
-helm install grafana grafana/grafana \
-  --namespace observability \
-  -f k8s/observability/grafana-monitor.yml
+echo "Applying applications"
 
-echo "Adding grafana dashboard"
-kubectl apply -f k8s/observability/petclinic-dashboard.yml
-
-echo "Starting Grafana port-forward..."
-kubectl port-forward \
-  -n observability \
-  svc/grafana \
-  3000:80 >/dev/null 2>&1 &
-#kubectl port-forward   -n observability   svc/observability-grafana   3000:80
-
-GRAFANA_PID=$!
-
-echo "Installing loki in observability namespace"
-helm install loki grafana/loki \
-  --namespace observability \
-  -f k8s/observability/loki-values.yml # Need to use manifest to specify I want use local storage instead of cloud
-
-
-echo "Installing Promtail in observability for logs reading and transfer to loki"
-helm install promtail grafana/promtail \
-  -n observability \
-  --set config.clients[0].url=http://loki.observability.svc.cluster.local:3100/loki/api/v1/push
-
-echo "kubectl port-forward svc/loki 3100:3100 -n observability"
-kubectl port-forward svc/loki 3100:3100 -n observability>/dev/null 2>&1 &
-
-LOKI_PID=$!
-
-wait
+kubectl apply -f gitops/applications/
