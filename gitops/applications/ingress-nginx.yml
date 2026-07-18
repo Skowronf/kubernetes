@@ -14,18 +14,21 @@ spec:
     targetRevision: 4.12.0
 
     helm:
-      parameters:
-        - name: admissionWebhooks.patch.enabled
-          value: "true"
-      values: | #kind: DaemonSet since localhost:80 -> Kind node -> Ingress Controller Pod
+      releaseName: ingress-nginx
+
+      values: |
         controller:
-          kind: DaemonSet  
+          kind: DaemonSet
 
           hostPort:
             enabled: true
 
+          service:
+            type: ClusterIP
+
         admissionWebhooks:
           enabled: true
+
           patch:
             enabled: true
 
@@ -40,4 +43,3 @@ spec:
 
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
