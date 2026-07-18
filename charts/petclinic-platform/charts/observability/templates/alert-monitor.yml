@@ -4,7 +4,7 @@ metadata:
   name: petclinic-alerts
   namespace: observability
   labels:
-    release: prometheus
+    release: observability # PrometheusRule release label for Helm deployment
 spec:
   groups:
     - name: petclinic.rules
