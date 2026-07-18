@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress # Routing HTTP
+
+metadata:
+  name: petclinic
+
+  labels:
+    app: petclinic
+
+spec:
+
+  ingressClassName: nginx
+
+  rules:
+    - host: petclinic.local
+
+      http:
+        paths:
+          - path: /
+
+            pathType: Prefix
+
+            backend: # Ingress -> Service -> Pod, never Ingress -> Pod
+              service:
+                name: petclinic
+
+                port:
+                  number: 8080
