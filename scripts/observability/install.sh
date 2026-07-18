@@ -52,6 +52,7 @@ kubectl port-forward \
   -n observability \
   svc/grafana \
   3000:80 >/dev/null 2>&1 &
+#kubectl port-forward   -n observability   svc/observability-grafana   3000:80
 
 GRAFANA_PID=$!
 
