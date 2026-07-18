@@ -142,6 +142,13 @@ grafana:
   adminUser: admin
   adminPassword: admin
 
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+
+    hosts:
+      - grafana.local
+
   datasources:
     datasources.yaml:
       apiVersion: 1
