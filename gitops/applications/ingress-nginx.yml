@@ -15,6 +15,11 @@ spec:
 
     helm:
       releaseName: ingress-nginx
+      # DaemonSet - Run one ingress controller Pod on every Kubernetes node
+      # hostPort:true - Expose ports 80 and 443 directly on every node without requiring a LoadBalancer or NodePort Service.
+      # ClusterIP -  Internal Service used for in-cluster communication only
+      # admissionWebHooks:enabled -  Enable validation webhooks for Ingress resources.
+      # Patch:enabled - Automatically configure TLS certificates required by the admission webhook.
 
       values: |
         controller:
