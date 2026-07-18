@@ -14,6 +14,9 @@ spec:
     targetRevision: 4.12.0
 
     helm:
+      parameters:
+        - name: admissionWebhooks.patch.enabled
+          value: "true"
       values: | #kind: DaemonSet since localhost:80 -> Kind node -> Ingress Controller Pod
         controller:
           kind: DaemonSet  
@@ -37,3 +40,4 @@ spec:
 
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
