@@ -112,7 +112,7 @@ jobs:
           kind export kubeconfig --name petclinic-ci > $KUBECONFIG
           kubectl cluster-info
 
-      - name: Load image into kind - replaces registry pull
+      - name: Load image into kind
         run: |
           docker pull ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
           kind load docker-image ghcr.io/${{ env.IMAGE_NAME }}:sha-${{ github.sha }} --name petclinic-ci
