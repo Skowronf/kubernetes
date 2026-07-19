@@ -4,6 +4,8 @@ kind: Application
 metadata:
   name: ingress-nginx
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "30" # Deploy ingress last to expose services only after workloads are running.
 
 spec:
   project: default
@@ -17,7 +19,7 @@ spec:
       releaseName: ingress-nginx
       # DaemonSet - Run one ingress controller Pod on every Kubernetes node
       # hostPort:true - Expose ports 80 and 443 directly on every node without requiring a LoadBalancer or NodePort Service.
-      # ClusterIP -  Internal Service used for in-cluster communication only
+      # ClusterIP -  Internal Service used for in-cluster communication only (default one)
       # admissionWebHooks:enabled -  Enable validation webhooks for Ingress resources.
       # Patch:enabled - Automatically configure TLS certificates required by the admission webhook.
 
