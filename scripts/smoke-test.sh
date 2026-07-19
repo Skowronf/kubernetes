@@ -1,1 +1,1 @@
-curl -f http://localhost:8080
+curl -f http://petclinic.local/
