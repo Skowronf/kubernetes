@@ -108,7 +108,28 @@ jobs:
 
       - name: Create kind cluster
         run: |
-          kind create cluster --name petclinic-ci
+          cat <<EOF > kind-config.yaml
+          kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
+
+          name: petclinic-ci
+
+          nodes:
+            - role: control-plane
+              extraPortMappings:
+                - containerPort: 80
+                  hostPort: 80
+                  protocol: TCP
+
+                - containerPort: 443
+                  hostPort: 443
+                  protocol: TCP
+          EOF
+
+          kind create cluster \
+            --name petclinic-ci \
+            --config kind-config.yaml
+
           kind export kubeconfig --name petclinic-ci > $KUBECONFIG
           kubectl cluster-info
 
@@ -149,11 +170,32 @@ jobs:
           kubectl rollout status deployment/petclinic -n petclinic --timeout=120s
 
 
-      - name: Port forward app
+      - name: Install ingress-nginx
         run: |
-          kubectl port-forward svc/petclinic -n petclinic 8080:8080 &
-          sleep 5
-        
+          kubectl apply \
+          --server-side \
+          -n argocd \
+          -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          
+          
+          kubectl wait \
+          --for=condition=available \
+          deployment/argocd-server \
+          -n argocd \
+          --timeout=180s
+          
+
+      - name: Add petclinic.local
+        run: |
+          echo "127.0.0.1 petclinic.local" | sudo tee -a /etc/hosts  
+
+      - name: Port forward ingress
+        run: |
+          kubectl port-forward \
+          -n ingress-nginx \
+          svc/ingress-nginx-controller \
+          80:80 &
+          sleep 10
 
       - name: Print logs
         run: |
@@ -173,7 +215,7 @@ jobs:
           kubectl logs -n petclinic -l app=petclinic --tail=400
 
       - name: Smoke test
-        run: curl -f http://localhost:8080
+        run: curl -f http://petclinic.local
 
 
       - name: Show cluster state

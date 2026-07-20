@@ -14,7 +14,7 @@ This platform simulates a real-world internal developer platform:
 - **Platform Layer** → Kubernetes + Helm
 - **Delivery Layer** → GitOps (ArgoCD)
 - **Observability Layer** → Prometheus + Grafana + Loki
-- **Automation Layer** → Bash scripts + CI/CD ready structure #TODO
+- **Automation Layer** → Bash scripts + CI/CD ready structure
 
 ---
 

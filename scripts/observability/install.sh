@@ -42,7 +42,7 @@ kubectl wait \
   -n argocd   \
   --for=jsonpath='{.status.sync.status}'=Synced \
   application --all \
-  --timeout=600s
+  --timeout=800s
 
 echo "Waiting for applications to be healthy in argo"
 
@@ -50,4 +50,4 @@ kubectl wait \
   -n argocd  \
   --for=jsonpath='{.status.health.status}'=Healthy \
   application --all \
-  --timeout=600s
+  --timeout=800s
