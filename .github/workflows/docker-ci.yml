@@ -169,20 +169,24 @@ jobs:
         run: |
           kubectl rollout status deployment/petclinic -n petclinic --timeout=120s
 
-
       - name: Install ingress-nginx
         run: |
-          kubectl apply \
-          --server-side \
-          -n argocd \
-          -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-          
-          
-          kubectl wait \
-          --for=condition=available \
-          deployment/argocd-server \
-          -n argocd \
-          --timeout=180s
+          kubectl create namespace ingress-nginx
+      
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+      
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+            --namespace ingress-nginx \
+            --version 4.12.0 \
+            --set controller.kind=DaemonSet \
+            --set controller.hostPort.enabled=true \
+            --set controller.service.type=ClusterIP \
+            --set controller.admissionWebhooks.enabled=true \
+            --wait \
+            --timeout 5m
+      
+          kubectl get pods -n ingress-nginx
           
 
       - name: Add petclinic.local
