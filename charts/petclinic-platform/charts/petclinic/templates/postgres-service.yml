@@ -5,6 +5,7 @@ metadata:
   name: postgres # set DNS name
   namespace: petclinic
 spec:
+  clusterIP: None # No virtual ip adress, dns will return ip adresses of pods
   selector:
     app: postgres # Find all Pods with this label (set in Deployment)
   ports:
