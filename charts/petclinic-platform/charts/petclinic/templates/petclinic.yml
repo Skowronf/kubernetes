@@ -34,6 +34,7 @@ spec:
               done
       containers:
         - name: petclinic
+          resources: {{- toYaml .Values.resources | nindent 6 }} # from values.yaml, whole resources block to yaml, indented 6 spaces
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: Never # Don't pull image from registry ( I have it locally )
           ports:
