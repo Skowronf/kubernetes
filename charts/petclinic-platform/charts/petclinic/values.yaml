@@ -2,3 +2,11 @@ replicaCount: 1
 image:
   repository: petclinic
   tag: ci
+resources:
+  requests: # Minimum resources Kubernetes reserves for scheduling this container used by scheduler
+    cpu: 250m
+    memory: 512Mi
+
+  limits: # Maximum resources the container can use before being throttled (CPU) or OOMKilled (memory)
+    cpu: 1000m
+    memory: 1Gi
