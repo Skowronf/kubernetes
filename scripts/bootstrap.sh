@@ -3,6 +3,7 @@ set -euo pipefail
 
 ./scripts/build.sh
 ./scripts/cluster.sh
+./scripts/install-cilium.sh
 ./scripts/observability/install.sh
 ./scripts/smoke-test.sh
 ./scripts/e2e.sh
