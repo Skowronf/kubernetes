@@ -3,8 +3,8 @@ kind: NetworkPolicy
 metadata:
   name: deny-all
   namespace: petclinic
-  spec:
-    podSelector: {} # All pods in the namespace
-    policyTypes:
+spec:
+  podSelector: {} # All pods in the namespace
+  policyTypes:
     - Ingress
     - Egress
