@@ -5,6 +5,7 @@ metadata:
   namespace: observability # does have its own namespace, but does not mean it cannot monitor others
   labels:
     app: petclinic # matches the service monitor selector for prometheus in values
+    release: observability # matches Prometheus serviceMonitorSelector
 spec:
   selector:
     matchLabels:
