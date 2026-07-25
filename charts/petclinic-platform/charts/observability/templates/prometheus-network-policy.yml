@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+metadata:
+  name: allow-prometheus-scrape
+  namespace: petclinic
+
+spec:
+  podSelector:
+    matchLabels:
+      app: petclinic
+
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: observability # Allows Prometheus from observability namespace to scrape, PetClinic metrics endpoint (/actuator/prometheus)
+
+    ports:
+    - protocol: TCP
+      port: 8080
