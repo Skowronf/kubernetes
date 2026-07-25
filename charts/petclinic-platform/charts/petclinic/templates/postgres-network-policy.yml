@@ -17,5 +17,3 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
-    - protocol: UDP
-      port: 5433
