@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy 
 metadata:
-  name: postgres-allow-petclinic
+  name: postgres-allow-ingress-from-petclinic
   namespace: petclinic
 spec:
   podSelector:
@@ -17,3 +17,5 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+# Allow PostgreSQL Pods to receive TCP traffic on port 5432
+# from PetClinic Pods for database connections.

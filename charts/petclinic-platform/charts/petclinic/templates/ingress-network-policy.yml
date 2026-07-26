@@ -20,3 +20,6 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+# Pods in the 'petclinic' namespace with the label 'app: petclinic'
+# can receive TCP traffic on port 8080 only from Pods in the
+# 'ingress-nginx' namespace.
