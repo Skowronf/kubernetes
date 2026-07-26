@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ./scripts/build.sh
+./scripts/update-docker-image.sh
 ./scripts/cluster.sh
 ./scripts/install-cilium.sh
 ./scripts/observability/install.sh

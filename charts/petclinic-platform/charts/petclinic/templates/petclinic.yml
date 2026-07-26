@@ -36,7 +36,7 @@ spec:
         - name: petclinic
           resources: {{- toYaml .Values.resources | nindent 12 }} # from values.yaml, whole resources block to yaml, indented 12 spaces
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Never # Don't pull image from registry ( I have it locally )
+          imagePullPolicy: Always # Pull image from registry every time, even if it is already present on the node
           ports:
             - containerPort: 8080
           envFrom:
