@@ -1,5 +1,14 @@
-source ./scripts/env.sh
+#!/bin/bash
 
-kind delete cluster --name petclinic-ci || true
-kind create cluster --name petclinic-ci --config bootstrap/kind/cluster.yml
-kind load docker-image petclinic:ci --name petclinic-ci
+set -e
+
+CLUSTER_NAME="petclinic-ci"
+
+kind delete cluster \
+  --name ${CLUSTER_NAME} || true
+# |true:
+#   Ensures that the script continues even if the cluster does not exist.
+
+kind create cluster \
+  --name ${CLUSTER_NAME} \
+  --config bootstrap/kind/cluster.yml

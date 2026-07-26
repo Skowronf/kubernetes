@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
-  repository: petclinic
-  tag: ci
+  repository: ghcr.io/skowronf/petclinic
+  tag: 39a2a8f
 resources:
   requests: # Minimum resources Kubernetes reserves for scheduling this container used by scheduler
     cpu: 250m
