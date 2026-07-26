@@ -13,6 +13,7 @@ spec:
       labels:
         app: petclinic # Each new Pod will get this label, used by Deployment and Service
     spec:
+      imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 12 }}
       initContainers: # Run before main container, main container won't start until this one ends successfully
         - name: wait-for-postgres
           image: postgres:16
@@ -37,7 +38,6 @@ spec:
           resources: {{- toYaml .Values.resources | nindent 12 }} # from values.yaml, whole resources block to yaml, indented 12 spaces
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: Always # Pull 
-          imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 12 }}
           ports:
             - containerPort: 8080
           envFrom:
