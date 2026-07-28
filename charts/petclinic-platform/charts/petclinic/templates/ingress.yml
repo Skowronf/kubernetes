@@ -22,7 +22,7 @@ spec:
 
             backend: # Ingress -> Service -> Pod, never Ingress -> Pod
               service:
-                name: petclinic
+                name: petclinic-stable
 
                 port:
                   number: 8080
