@@ -18,16 +18,15 @@ spec:
       trafficRouting:
         nginx:
           stableIngress: petclinic # name of existing Ingress, managed by Argo Rollouts
-              # Existing stable Ingress managed by Argo Rollouts.
-              # Rollouts will automatically create/update a Canary Ingress
-              # and adjust traffic weights during deployment.
+          # Existing stable Ingress managed by Argo Rollouts.
+          # Rollouts will automatically create/update a Canary Ingress
+          # and adjust traffic weights during deployment.
 
       steps:
-        - setWeight: 20
-          # Send 20% traffic to the new version.
+        - setWeight: 20 # Send 20% traffic to the new version.
 
         - pause:
-          duration: 60s
+            duration: 60s
 
         # Increase traffic to 50%.
         - setWeight: 50
