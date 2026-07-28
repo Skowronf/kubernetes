@@ -1,25 +1,43 @@
-apiVersion: apps/v1
-kind: Deployment # Makes a Pod with a label, then Service can find this pod using selector with same label
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout # Argo Rollouts replacement for Deployment, manages ReplicaSets and progressive delivery
 metadata:
   name: petclinic
   namespace: petclinic # Will be made in this namespace
+
 spec:
-  replicas: {{ .Values.replicaCount }} # Kubernetes will keep that many pods running, if they die, they will be created again
+  replicas: {{ .Values.replicaCount }} # Rollout will keep that many pods running, if they die, they will be created again
+
   selector:
-    matchLabels: # Deployment finds Pod with this label, must be the same as label in template
+    matchLabels: # Rollout finds Pod with this label, must be the same as label in template
       app: petclinic
+
+  strategy:
+    canary:
+      # Defines how a new version should be introduced.
+      # For now this only defines the rollout process.
+
+      steps:
+        - setWeight: 100
+          # Send 100% traffic to the new version.
+          # Temporary configuration to verify Rollout works.
+
   template:
     metadata:
       labels:
-        app: petclinic # Each new Pod will get this label, used by Deployment and Service
+        app: petclinic # Each new Pod will get this label, used by Rollout and Service
+
     spec:
-      imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 12 }}
+      imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+
       initContainers: # Run before main container, main container won't start until this one ends successfully
         - name: wait-for-postgres
+
           image: postgres:16
+
           envFrom:
             - secretRef: # use Secret to pass credentials
                 name: petclinic-secret
+
           command:
             - sh
             - -c
@@ -33,19 +51,28 @@ spec:
                 echo "Waiting for PostgreSQL..."
                 sleep 2
               done
+
       containers:
+
         - name: petclinic
+
           resources: {{- toYaml .Values.resources | nindent 12 }} # from values.yaml, whole resources block to yaml, indented 12 spaces
+
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always # Pull 
+
+          imagePullPolicy: Always # Pull image every time a Pod starts
+
           ports:
             - containerPort: 8080
+
           envFrom:
             - configMapRef: # Use configMap for configuration storage
                 name: petclinic-config
+
           readinessProbe: # Make sure application is ready for traffic, Service won't use pod until it is
             httpGet:
               path: /
               port: 8080
+
             initialDelaySeconds: 10
             periodSeconds: 30
