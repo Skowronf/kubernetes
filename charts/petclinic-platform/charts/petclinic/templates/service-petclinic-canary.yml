@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service # We already have Pod with application
 # Service makes sure that when IP of this Pod changes, we can still connect via stale name (DNS)
 metadata:
-  name: petclinic # set DNS name
+  name: petclinic-canary  # set DNS name for argo-rollouts to use, this is the canary version of the application
   namespace: petclinic
   labels:
     app: petclinic

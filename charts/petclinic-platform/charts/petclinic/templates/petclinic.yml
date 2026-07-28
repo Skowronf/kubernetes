@@ -13,8 +13,8 @@ spec:
 
   strategy:
     canary:
-      # Defines how a new version should be introduced.
-      # For now this only defines the rollout process.
+      stableService: petclinic-stable
+      canaryService: petclinic-canary
 
       steps:
         - setWeight: 100
