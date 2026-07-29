@@ -13,6 +13,9 @@ spec:
   source:
     repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
+    # Nginx is enforcer of Ingress rules
+    # Its a router (not a dns), it knows all services and routes traffic to them 
+    # based on the rules defined in Ingress resources.
     targetRevision: 4.12.0
 
     helm:
