@@ -1,5 +1,7 @@
 apiVersion: networking.k8s.io/v1
-kind: Ingress # Routing HTTP
+kind: Ingress
+# Ingress is a way to expose HTTP and HTTPS routes from 
+# OUTSIDE the cluster to services WITHIN the cluster. 
 
 metadata:
   name: petclinic
@@ -20,7 +22,7 @@ spec:
 
             pathType: Prefix
 
-            backend: # Ingress -> Service -> Pod, never Ingress -> Pod
+            backend: # Ingress -> Service -> Pod
               service:
                 name: petclinic-stable
 

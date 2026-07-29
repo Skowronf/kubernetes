@@ -18,5 +18,5 @@ spec:
         - protocol: TCP
           port: 53 # CoreDNS listens on TCP port 53 for DNS queries
 
-# Allow all Pods in the 'petclinic' namespace to send DNS queries
+# Allow all Pods in the 'petclinic' namespace to send queries to DNS servers
 # (UDP/TCP port 53) to Pods in the 'kube-system' namespace (e.g. CoreDNS).
