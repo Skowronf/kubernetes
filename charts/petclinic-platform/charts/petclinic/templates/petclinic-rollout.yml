@@ -23,19 +23,24 @@ spec:
           # and adjust traffic weights during deployment.
 
       steps:
-        - setWeight: 20 # Send 20% traffic to the new version.
+        - setWeight: 20
+
+        - analysis:
+            templates:
+              - templateName: petclinic-success-rate
 
         - pause:
             duration: 60s
 
-        # Increase traffic to 50%.
         - setWeight: 50
 
-        # Pause again before full promotion.
+        - analysis:
+            templates:
+              - templateName: petclinic-success-rate
+
         - pause:
             duration: 60s
 
-        # Send all traffic to the new version.
         - setWeight: 100
 
   template:

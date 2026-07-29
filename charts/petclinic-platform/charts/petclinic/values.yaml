@@ -1,7 +1,7 @@
 replicaCount: 2
 image:
   repository: ghcr.io/skowronf/petclinic
-  tag: 86fb74c
+  tag: cfd4347
 imagePullSecrets:
   - name: ghcr-secret
 resources:

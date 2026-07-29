@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: petclinic-success-rate
+spec:
+  metrics:
+    - name: http-success-rate
+      interval: 30s
+      count: 2
+      # It will check the success rate twice
+
+      successCondition: result[0] >= 0.50
+      failureCondition: result[0] < 0.50
+
+      provider:
+        prometheus:
+          address: http://observability-kube-prometh-prometheus.observability.svc.cluster.local:9090
+
+          query: |
+            (
+              sum(rate(http_server_requests_seconds_count{namespace="petclinic",status!~"5.."}[2m]))
+              /
+              sum(rate(http_server_requests_seconds_count{namespace="petclinic"}[2m]))
+            )
