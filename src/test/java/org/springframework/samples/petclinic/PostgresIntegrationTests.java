@@ -49,7 +49,7 @@ import org.springframework.web.client.RestTemplate;
 import org.testcontainers.DockerClientFactory;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = { "spring.docker.compose.skip.in-tests=false", //
-		"spring.docker.compose.start.arguments=--force-recreate,--renew-anon-volumes,postgres" })
+		"spring.docker.compose.start.arguments=--force-recreate,--renew-anon-volumes,db" })
 @ActiveProfiles("postgres")
 @DisabledInNativeImage
 public class PostgresIntegrationTests {
@@ -72,7 +72,7 @@ public class PostgresIntegrationTests {
 		new SpringApplicationBuilder(PetClinicApplication.class) //
 			.profiles("postgres") //
 			.properties( //
-					"spring.docker.compose.start.arguments=postgres" //
+					"spring.docker.compose.start.arguments=db" //
 			) //
 			.listeners(new PropertiesLogger()) //
 			.run(args);
