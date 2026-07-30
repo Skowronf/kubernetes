@@ -20,7 +20,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: skowronf/petclinic
   LOCAL_IMAGE: petclinic:${{ github.sha }}
-  IMAGE_TAG: sha-${{ github.sha }}
+  IMAGE_TAG: ${{ github.sha }}
 
 
 jobs:
