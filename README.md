@@ -2,8 +2,6 @@
 
 A cloud-native **Platform Engineering + DevSecOps + GitOps showcase project** built on top of the Spring PetClinic application.
 
-This project demonstrates how a simple Spring Boot monolith can evolve into a **production-like Kubernetes platform** with observability, automation, and GitOps principles.
-
 ---
 
 ##  Architecture Overview
@@ -45,34 +43,15 @@ All major design decisions are documented in ADR format:
 - Dashboards → Grafana
 - Logs → Loki
 
-##  Observability Flow
-
-This platform implements observability:
-
-Metrics → Prometheus → Grafana  
-Logs → Loki → Grafana
-
-## Environments #TODO
-
-The platform supports multi-environment setup: #TODO
-
-- dev
-- staging
-- production (planned)
-
-Each environment can have:
-- different Helm values
-- separate ArgoCD apps
-
 
 ### DevSecOps Ready (extensible)
 - Kubernetes-native configuration (ConfigMaps & Secrets)
 - ADR-driven architecture decisions
 - Ready for security scanning & policy-as-code
 
-## CI/CD Pipeline #TODO
+## CI/CD Pipeline
 
-This project is designed to be CI/CD-ready. #TODO
+This project is designed to be CI/CD-ready.
 
 ### Typical flow:
 1. Build application
