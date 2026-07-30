@@ -185,6 +185,6 @@ jobs:
           git diff --cached --quiet && exit 0
 
           git commit \
-          -m "Update petclinic image ${{ github.sha }}"
+          -m "Update petclinic image ${{ github.sha }} [skip ci]"
 
           git push
