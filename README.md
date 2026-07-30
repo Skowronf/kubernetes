@@ -16,9 +16,6 @@ This platform simulates a real-world internal developer platform:
 
 ---
 
-
-##  Key Features
-
 ##  Architecture Decisions
 
 All major design decisions are documented in ADR format:
