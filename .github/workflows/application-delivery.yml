@@ -5,7 +5,6 @@ concurrency:
   group: petclinic-delivery
   cancel-in-progress: true
 
-
 on:
   push:
     branches:
