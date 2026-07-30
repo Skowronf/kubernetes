@@ -1,4 +1,4 @@
-name: Application Delivery Pipeline
+name: Application Delivery Pipeline v1
 
 
 # Prevent old pipelines from overwriting newer GitOps changes
