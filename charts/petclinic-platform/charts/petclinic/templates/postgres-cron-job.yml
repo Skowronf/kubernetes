@@ -55,14 +55,7 @@ spec:
                 - name: backup
                   mountPath: /backup
 
-                - name: backup-script
-                  mountPath: /scripts
-
           volumes:
             - name: backup
               persistentVolumeClaim:
                 claimName: postgres-backups
-
-            - name: backup-script
-              configMap:
-                name: postgres-backup-script
