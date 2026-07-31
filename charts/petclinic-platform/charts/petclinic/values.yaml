@@ -2,7 +2,6 @@ replicaCount: 2
 image:
   repository: ghcr.io/skowronf/petclinic
   tag: e82500f1b402863001360e11b8baa6bede398e0d
-imagePullSecrets:
   - name: ghcr-secret
 resources:
   requests: # Minimum resources Kubernetes reserves for scheduling this container used by scheduler
