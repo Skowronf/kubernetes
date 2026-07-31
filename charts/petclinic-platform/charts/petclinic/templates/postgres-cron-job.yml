@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: petclinic
+
+spec:
+  schedule: "*/5 * * * *" # Every 5 minutes
+  concurrencyPolicy: Forbid
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+            - name: backup
+              image: postgres:16
+
+              command:
+                # Create a compressed PostgreSQL dump that will be used for restore
+                # Keep a timestamped copy for historical backups
+                # Delete backups older than 2 days
+                - /bin/sh
+                - -c
+                - |
+                    mkdir -p /backup/archive
+
+                    export PGPASSWORD="$POSTGRES_PASSWORD"
+
+                    pg_dump \
+                      -Fc \
+                      -h postgres \
+                      -U "$POSTGRES_USER" \
+                      "$POSTGRES_DB" \
+                      > /backup/latest.dump
+
+                    cp /backup/latest.dump \
+                      /backup/archive/backup-$(date +%F-%H-%M).dump
+
+                    find /backup/archive -type f -mtime +2 -delete
+
+              env:
+                - name: POSTGRES_DB
+                  value: petclinic
+
+                - name: POSTGRES_USER
+                  value: petclinic
+
+                - name: POSTGRES_PASSWORD
+                  value: petclinic
+
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+
+                - name: backup-script
+                  mountPath: /scripts
+
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: postgres-backups
+
+            - name: backup-script
+              configMap:
+                name: postgres-backup-script
