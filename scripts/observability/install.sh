@@ -22,9 +22,7 @@ kubectl wait \
   --timeout=180s
 
 echo "Patching Argo CD to allow insecure connections"
-kubectl patch deployment argocd-server \
-  -n argocd \ --type='json' \
-  -p='[ { "op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure" } ]'
+kubectl patch deployment argocd-server -n argocd --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--insecure"}]'
 
 echo "Creating Argo CD ingress"
 
