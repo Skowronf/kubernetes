@@ -10,7 +10,7 @@ spec:
   ingressClassName: nginx
 
   rules:
-  - host: argocd.example.com
+  - host: argocd.local
     http:
       paths:
       - path: /
