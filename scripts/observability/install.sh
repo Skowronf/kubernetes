@@ -11,7 +11,7 @@ echo "Installing Argo CD"
 kubectl apply \
   --server-side \
   -n argocd \
-  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.4.6/manifests/install.yaml
 
 echo "Waiting for Argo CD"
 
@@ -22,10 +22,9 @@ kubectl wait \
   --timeout=180s
 
 echo "Patching Argo CD to allow insecure connections"
-kubectl patch configmap argocd-cmd-params-cm \
-  -n argocd \
-  --type merge \
-  -p '{"data":{"server.insecure":"true"}}'
+kubectl patch deployment argocd-server \
+  -n argocd \ --type='json' \
+  -p='[ { "op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--insecure" } ]'
 
 echo "Creating Argo CD ingress"
 
