@@ -21,6 +21,16 @@ kubectl wait \
   -n argocd \
   --timeout=180s
 
+echo "Patching Argo CD to allow insecure connections"
+kubectl patch configmap argocd-cmd-params-cm \
+  -n argocd \
+  --type merge \
+  -p '{"data":{"server.insecure":"true"}}'
+
+echo "Creating Argo CD ingress"
+
+kubectl apply -f bootstrap/kind/argocd-ingress.yml
+
 echo "Argo CD admin password:"
 
 kubectl -n argocd get secret argocd-initial-admin-secret \
