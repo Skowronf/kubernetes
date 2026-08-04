@@ -49,6 +49,9 @@ spec:
         app: petclinic
 
     spec:
+      # Give the application up to 30 seconds to finish in-flight requests,
+      # close connections, and shut down cleanly before being forcefully killed.
+      terminationGracePeriodSeconds: 30
 
       # Pod-level security configuration.
       # Applies to all containers running inside this Pod.
