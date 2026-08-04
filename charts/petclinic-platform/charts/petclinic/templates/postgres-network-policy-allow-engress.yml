@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+metadata:
+  name: postgres-backup-allow-egress-to-postgres
+  namespace: petclinic
+
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-backup
+
+  policyTypes:
+  - Egress
+
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+
+    ports:
+    - protocol: TCP
+      port: 5432
+
+# Allow PostgreSQL backup Pods to connect to PostgreSQL
+# on TCP port 5432 in order to execute pg_dump.
