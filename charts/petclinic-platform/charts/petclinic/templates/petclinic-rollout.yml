@@ -59,13 +59,13 @@ spec:
         runAsNonRoot: true
 
         # Force application processes to run using the dedicated application user.
-        runAsUser: 1000
+        runAsUser: 10001
 
         # Force application processes to run using the dedicated application group.
-        runAsGroup: 3000
+        runAsGroup: 30001
 
         # Ensure mounted volumes are accessible by the application group.
-        fsGroup: 2000
+        fsGroup: 20001
 
 
       imagePullSecrets:

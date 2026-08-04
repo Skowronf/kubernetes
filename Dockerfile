@@ -7,8 +7,8 @@ COPY target/*.jar app.jar
 # Create a non-root application user and group.
 # Assign ownership of application files to allow the app
 # to run securely without root privileges.
-RUN groupadd -g 3000 appgroup && \
-    useradd -u 1000 -g 3000 -m appuser && \
+RUN groupadd -g 30001 appgroup && \
+    useradd -u 10001 -g 30001 -m appuser && \
     chown -R appuser:appgroup /app
 
 USER appuser
