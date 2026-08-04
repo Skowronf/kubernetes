@@ -1,0 +1,17 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+
+metadata:
+  name: petclinic-pdb
+  namespace: petclinic
+
+spec:
+  # Ensure that at least one healthy (Ready) Pod remains available
+  # during voluntary disruptions such as node maintenance,
+  # cluster upgrades, or kubectl drain operations.
+  # This helps prevent application downtime during planned maintenance.
+  minAvailable: 1
+
+  selector:
+    matchLabels:
+      app: petclinic
