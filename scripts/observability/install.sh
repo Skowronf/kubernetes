@@ -35,7 +35,34 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 echo "Applying applications"
 
-kubectl apply -f gitops/applications/
+echo "Applying ArgoCD Applications"
+
+kubectl apply -f gitops/applications/cert-manager.yml
+kubectl apply -f gitops/applications/argo-rollouts.yml
+kubectl apply -f gitops/applications/observability.yml
+kubectl apply -f gitops/applications/petclinic.yml
+kubectl apply -f gitops/applications/ingress-nginx.yml
+
+echo "Waiting for cert-manager CRDs"
+
+until kubectl get crd certificates.cert-manager.io >/dev/null 2>&1; do
+  sleep 5
+done
+
+kubectl wait \
+  --for=condition=Established \
+  crd/certificates.cert-manager.io \
+  --timeout=120s
+
+kubectl wait \
+  --for=condition=Established \
+  crd/clusterissuers.cert-manager.io \
+  --timeout=120s
+
+echo "Applying cert-manager resources"
+
+kubectl apply -f gitops/applications/cluster-issuer.yml
+kubectl apply -f gitops/applications/argo-certificate.yml
 
 echo "Waiting for Argo Applications to appear (might want to add exit condition)"
 
