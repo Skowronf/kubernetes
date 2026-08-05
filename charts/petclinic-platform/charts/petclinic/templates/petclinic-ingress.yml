@@ -5,6 +5,8 @@ kind: Ingress
 
 metadata:
   name: petclinic
+  labels:
+    app: petclinic
   namespace: petclinic
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
