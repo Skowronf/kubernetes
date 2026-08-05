@@ -28,6 +28,10 @@ echo "Creating Argo CD ingress"
 
 kubectl apply -f bootstrap/kind/argocd-ingress.yml
 
+echo "Creating Petclinic ingress"
+
+kubectl apply -f bootstrap/kind/petclinic-ingress.yml
+
 echo "Argo CD admin password:"
 
 kubectl -n argocd get secret argocd-initial-admin-secret \
@@ -91,6 +95,11 @@ until kubectl apply -f gitops/applications/cluster-issuer.yml; do
 done
 
 until kubectl apply -f gitops/applications/argo-certificate.yml; do
+  echo "Waiting for cert-manager webhook..."
+  sleep 5
+done
+
+until kubectl apply -f gitops/applications/petclinic-certificate.yml; do
   echo "Waiting for cert-manager webhook..."
   sleep 5
 done

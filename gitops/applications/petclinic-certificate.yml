@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: petclinic-tls
+  namespace: petclinic
+
+spec:
+
+  secretName: petclinic-tls
+
+  issuerRef:
+    name: local-ca
+    kind: ClusterIssuer
+
+  dnsNames:
+    - petclinic.local
