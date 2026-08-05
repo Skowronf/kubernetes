@@ -18,6 +18,8 @@ spec:
     targetRevision: v1.18.2
 
     helm:
+        # Install cert-manager Custom Resource Definitions.
+        # Required for creating resources like Certificate, Issuer and ClusterIssuer.
       values: |
         crds:
           enabled: true
