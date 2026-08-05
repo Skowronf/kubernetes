@@ -5,7 +5,7 @@ metadata:
   namespace: petclinic
 
 spec:
-  schedule: "*/15 * * * *" # every 5 minutes
+  schedule: "0 */4 * * *" # every 4 hours
   concurrencyPolicy: Forbid
 
   jobTemplate:
