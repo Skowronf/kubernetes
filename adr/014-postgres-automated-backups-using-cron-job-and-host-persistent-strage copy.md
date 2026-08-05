@@ -1,17 +1,20 @@
-# ADR-014: PostgreSQL Automated Backups Using Kubernetes CronJob and Host Persistent Storage
+# ADR-014: PostgreSQL Backup and Restore Architecture for Local Kubernetes GitOps Platform
 
 ## Status
+
 Accepted
 
 ---
 
 ## Context
 
-The PetClinic platform uses PostgreSQL as the primary database. The development environment is deployed on a local Kubernetes cluster created with kind.
+The PetClinic platform is deployed on a local Kubernetes cluster created with kind and follows a GitOps deployment model managed by ArgoCD.
 
-The cluster lifecycle includes frequent recreation of the whole environment, which can result in database data loss because Kubernetes resources and storage created inside the cluster may not survive cluster deletion.
+PostgreSQL is deployed as a StatefulSet with persistent storage and serves as the primary application database.
 
-A mechanism is required to preserve PostgreSQL data independently from the Kubernetes cluster lifecycle.
+The development environment is recreated frequently, including complete deletion and recreation of the Kubernetes cluster. Although PostgreSQL uses PersistentVolumes inside Kubernetes, storage created within the cluster is not guaranteed to survive cluster recreation when using kind.
+
+A backup mechanism is therefore required to preserve PostgreSQL data independently of the Kubernetes cluster lifecycle.
 
 The following requirements were identified:
 
@@ -20,20 +23,29 @@ The following requirements were identified:
 - backup files should be stored on the local machine filesystem
 - the solution should use Kubernetes-native resources
 - the backup process should be reproducible during platform bootstrap
+- database restore should be possible using standard PostgreSQL tooling
+- backup workloads must comply with the platform's NetworkPolicy security model
 
 ---
 
 ## Decision
 
-A Kubernetes CronJob is used to periodically create PostgreSQL backups using `pg_dump`.
+A Kubernetes-native backup solution is implemented using a CronJob that periodically executes `pg_dump` and stores backup files on host-mounted persistent storage.
 
-The backup solution consists of a host-mounted persistent storage volume and an automated backup job.
+The backup architecture consists of:
+
+- PostgreSQL StatefulSet
+- Kubernetes CronJob
+- host-mounted PersistentVolume
+- PersistentVolumeClaim
+- manual restore procedure
+- dedicated NetworkPolicies allowing secure communication between backup workloads and PostgreSQL
 
 ---
 
 ### 1. Host-based persistent backup storage
 
-A dedicated directory from the host machine is mounted into the kind cluster:
+A dedicated directory from the host machine is mounted into the kind cluster.
 
 ```
 Host filesystem:
@@ -70,48 +82,47 @@ The PersistentVolume configuration uses:
 
 - `hostPath` storage
 - `Retain` reclaim policy
-- explicit PV and PVC binding
+- explicit PV/PVC binding
 
-Dynamic provisioning is disabled for the backup volume by setting:
+Dynamic provisioning is disabled by configuring:
 
 ```yaml
 storageClassName: ""
 ```
 
-This ensures that Kubernetes uses the predefined host-based volume instead of the default cluster StorageClass.
+This guarantees that Kubernetes always uses the predefined host-mounted storage instead of the default StorageClass.
 
 ---
 
 ### 2. PostgreSQL backup CronJob
 
-A Kubernetes CronJob runs periodically and executes PostgreSQL backup commands.
+A Kubernetes CronJob periodically executes PostgreSQL backups using the official PostgreSQL container image.
 
-The backup schedule is:
+The backup schedule is configured as:
 
 ```yaml
-schedule: "*/5 * * * *"
+schedule: "0 * * * *"
 ```
 
-The CronJob uses the PostgreSQL image and runs `pg_dump` against the PostgreSQL service.
+The CronJob performs the following operations:
 
-The backup process performs the following steps:
-
-1. creates the backup directory if it does not exist
+1. creates the backup directory if necessary
 2. authenticates against PostgreSQL
-3. creates a compressed PostgreSQL dump using custom format
-4. stores the latest backup:
+3. executes `pg_dump`
+4. creates a compressed PostgreSQL dump in custom format
+5. updates the latest backup:
 
 ```
 /backup/latest.dump
 ```
 
-5. creates timestamped historical backups:
+6. stores timestamped historical backups:
 
 ```
 /backup/archive/backup-YYYY-MM-DD-HH-MM.dump
 ```
 
-6. removes backups older than two days
+7. removes expired backup files according to the retention policy
 
 ---
 
@@ -123,18 +134,50 @@ Historical backups are automatically cleaned using:
 find /backup/archive -type f -mtime +7 -delete
 ```
 
-This keeps recent recovery points while preventing unlimited disk usage.
+This maintains multiple recovery points while preventing unlimited local storage growth.
+
+---
+
+### 4. Database restore procedure
+
+Database restore is currently performed manually using standard PostgreSQL utilities.
+
+The recovery process consists of:
+
+1. copying the backup file into the PostgreSQL Pod
+2. terminating active database connections
+3. dropping the existing database
+4. recreating the database
+5. restoring the dump using `pg_restore`
+
+This procedure enables recovery after cluster recreation or accidental data loss.
+
+---
+
+### 5. Network security
+
+The Kubernetes cluster follows a default-deny networking model enforced by Cilium NetworkPolicies.
+
+Backup traffic requires both:
+
+- egress permission from the backup workload
+- ingress permission to PostgreSQL
+
+Dedicated NetworkPolicies explicitly allow communication between the backup CronJob and PostgreSQL over TCP port 5432.
+
+This preserves the platform's zero-trust networking model while allowing automated backups.
 
 ---
 
 ## Rationale
 
-- Host-based storage allows backup files to survive kind cluster deletion
-- Kubernetes CronJob provides native scheduling without external backup tooling
-- `pg_dump` creates portable PostgreSQL backups independent from the running cluster
-- Static PV binding provides predictable behavior in a local development environment
-- The solution can be deployed together with the rest of the platform using Helm
-- Backup files remain accessible directly from the developer machine
+- Host-mounted storage allows backups to survive kind cluster deletion.
+- Kubernetes CronJobs provide native scheduling without additional infrastructure.
+- `pg_dump` produces portable PostgreSQL backups independent of Kubernetes resources.
+- Static PersistentVolume binding provides predictable storage behavior in local development.
+- Manual restore uses standard PostgreSQL tooling without requiring custom operators.
+- Explicit NetworkPolicies maintain security while allowing only required database access.
+- The complete solution can be deployed together with the rest of the platform using Helm and GitOps.
 
 ---
 
@@ -142,20 +185,23 @@ This keeps recent recovery points while preventing unlimited disk usage.
 
 ### Positive
 
-- PostgreSQL data can be preserved after kind cluster recreation
-- Backup creation is fully automated
-- Backup storage lifecycle is independent from Kubernetes cluster lifecycle
-- Historical backups provide multiple recovery points
-- No external backup infrastructure is required
-- The solution is reproducible through Kubernetes manifests
+- PostgreSQL data survives recreation of the kind cluster.
+- Backup creation is fully automated.
+- Backup storage lifecycle is independent from Kubernetes.
+- Historical backups provide multiple recovery points.
+- Backup files remain directly accessible from the host machine.
+- Restore can be performed using standard PostgreSQL tools.
+- Network communication follows least-privilege principles.
+- The entire backup architecture is reproducible through Kubernetes manifests.
 
 ### Negative
 
-- Automatic database restore during cluster bootstrap is not implemented yet
-- HostPath storage is suitable only for local development environments
-- Backup files exist only on a single machine
-- Frequent backups increase local storage usage
-- Database recovery currently requires a manual restore process
+- Database restore is still a manual operation.
+- HostPath storage is suitable only for local development.
+- Backup files exist only on a single machine.
+- Frequent backups consume local disk space.
+- Recovery time depends on manual execution of the restore procedure.
+- Failed backups may overwrite the latest backup if atomic writes are not used.
 
 ---
 
@@ -163,31 +209,50 @@ This keeps recent recovery points while preventing unlimited disk usage.
 
 ### 1. Kubernetes PersistentVolume only
 
-Rejected because cluster-managed storage does not guarantee data preservation after deleting and recreating a kind cluster.
+Rejected because storage managed exclusively inside the kind cluster does not guarantee persistence after cluster recreation.
 
 ---
 
-### 2. External backup storage (S3, managed database backups)
+### 2. External object storage (S3 or managed backup services)
 
-Rejected because the current environment is local development based on kind and does not require external infrastructure.
+Rejected because the project targets a local development environment and does not require external infrastructure.
 
 ---
 
 ### 3. PostgreSQL replication
 
-Rejected because the main requirement is disaster recovery after cluster recreation, not high availability.
+Rejected because the primary objective is disaster recovery after cluster recreation rather than high availability.
 
 ---
 
 ### 4. Manual database dumps
 
-Rejected because manual backups are unreliable and do not integrate with automated platform bootstrap.
+Rejected because manual backups are unreliable and cannot be integrated into automated platform deployment.
 
 ---
 
 ## Future Improvements
 
-- Add automated PostgreSQL restore during initial cluster bootstrap
-- Add backup restore validation
-- Store PostgreSQL credentials using Kubernetes Secrets
-- Move backup storage to external object storage for production environments
+- Implement automatic database restore during cluster bootstrap.
+- Validate backup files before replacing the latest backup.
+- Use atomic backup writes:
+
+```bash
+pg_dump > latest.dump.tmp
+mv latest.dump.tmp latest.dump
+```
+
+- Validate backups before restore using:
+
+```bash
+pg_restore --list backup.dump
+```
+
+- Store PostgreSQL credentials in Kubernetes Secrets.
+- Add automated restore validation tests.
+- Encrypt backup files.
+- Move backup storage to S3-compatible object storage for production environments.
+- Implement scheduled restore testing.
+- Introduce PostgreSQL WAL archiving and Point-in-Time Recovery (PITR).
+- Add monitoring and alerting for failed backup jobs.
+- Improve backup metrics integration with Prometheus and Grafana.
