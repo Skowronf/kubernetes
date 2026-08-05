@@ -5,26 +5,25 @@ kind: Ingress
 
 metadata:
   name: petclinic
-
-  labels:
-    app: petclinic
+  namespace: petclinic
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 
 spec:
-
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - petclinic.local
+      secretName: petclinic-tls
 
   rules:
-    - host: petclinic.local
-
-      http:
-        paths:
-          - path: /
-
-            pathType: Prefix
-
-            backend: # Ingress -> Service -> Pod
-              service:
-                name: petclinic-stable
-
-                port:
-                  number: 8080
+  - host: petclinic.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: petclinic
+            port:
+              number: 8080
