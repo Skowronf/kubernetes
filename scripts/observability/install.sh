@@ -59,10 +59,42 @@ kubectl wait \
   crd/clusterissuers.cert-manager.io \
   --timeout=120s
 
+until kubectl get deployment cert-manager-webhook -n cert-manager >/dev/null 2>&1; do
+  echo "Waiting for cert-manager-webhook Deployment..."
+  sleep 2
+done
+
+kubectl rollout status deployment cert-manager \
+  -n cert-manager \
+  --timeout=180s
+
+kubectl rollout status deployment cert-manager-cainjector \
+  -n cert-manager \
+  --timeout=180s
+
+kubectl rollout status deployment cert-manager-webhook \
+  -n cert-manager \
+  --timeout=180s
+
+echo "Waiting for cert-manager webhook CA injection"
+
+until kubectl get validatingwebhookconfiguration cert-manager-webhook \
+  -o jsonpath='{.webhooks[0].clientConfig.caBundle}' | grep -q .; do
+  sleep 5
+done
+
 echo "Applying cert-manager resources"
 
-kubectl apply -f gitops/applications/cluster-issuer.yml
-kubectl apply -f gitops/applications/argo-certificate.yml
+until kubectl apply -f gitops/applications/cluster-issuer.yml; do
+  echo "Waiting for cert-manager webhook..."
+  sleep 5
+done
+
+until kubectl apply -f gitops/applications/argo-certificate.yml; do
+  echo "Waiting for cert-manager webhook..."
+  sleep 5
+done
+
 
 echo "Waiting for Argo Applications to appear (might want to add exit condition)"
 
