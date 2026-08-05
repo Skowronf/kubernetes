@@ -43,13 +43,6 @@ until kubectl get applications -n argocd --no-headers 2>/dev/null | grep -q .; d
   sleep 2
 done
 
-echo "Waiting for applications to be sync with argo"
-
-kubectl wait \
-  -n argocd   \
-  --for=jsonpath='{.status.sync.status}'=Synced \
-  application --all \
-  --timeout=1200s
 
 echo "Waiting for applications to be healthy in argo"
 
