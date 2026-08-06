@@ -6,7 +6,8 @@ kube-prometheus-stack:
   prometheus:
 
     ingress:
-
+      annotations:
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       enabled: true
       ingressClassName: nginx
 
@@ -14,6 +15,10 @@ kube-prometheus-stack:
         - prometheus.local
       paths:
         - /
+      tls:
+        - hosts:
+            - prometheus.local
+          secretName: prometheus-tls
 
       prometheusSpec:
 
@@ -154,13 +159,18 @@ grafana:
   adminPassword: admin
 
   ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     enabled: true
     ingressClassName: nginx
     hosts:
       - grafana.local
     path: /
     pathType: Prefix
-
+    tls:
+    - hosts:
+        - grafana.local
+      secretName: grafana-tls
 
   datasources:
     datasources.yaml:
