@@ -86,17 +86,28 @@ done
 echo "Applying cert-manager resources"
 
 until kubectl apply -f gitops/applications/cluster-issuer.yml; do
-  echo "Waiting for cert-manager webhook..."
+  echo "Waiting for cluster issuer..."
   sleep 5
 done
 
 until kubectl apply -f gitops/applications/argo-certificate.yml; do
-  echo "Waiting for cert-manager webhook..."
+  echo "Waiting for argo certificate..."
+  sleep 5
+done
+
+
+until kubectl apply -f gitops/applications/grafana-certificate.yml; do
+  echo "Waiting for grafana certificate..."
   sleep 5
 done
 
 until kubectl apply -f gitops/applications/petclinic-certificate.yml; do
-  echo "Waiting for cert-manager webhook..."
+  echo "Waiting for petclinic certificate..."
+  sleep 5
+done
+
+until kubectl apply -f gitops/applications/prometheus-certificate.yml; do
+  echo "Waiting for prometheus certificate..."
   sleep 5
 done
 

@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: grafana-tls
+  namespace: observability
+
+spec:
+
+  secretName: grafana-tls
+
+  issuerRef:
+    name: local-ca
+    kind: ClusterIssuer
+
+  dnsNames:
+    - grafana.local
