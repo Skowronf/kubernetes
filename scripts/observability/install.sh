@@ -37,8 +37,6 @@ echo "Applying ArgoCD Applications"
 
 kubectl apply -f gitops/argocd/applications/
 
-kubectl apply -f gitops/argocd/bootstrap/cluster-issuer.yml
-
 echo "Waiting for cert-manager CRDs"
 
 until kubectl get crd certificates.cert-manager.io >/dev/null 2>&1; do
