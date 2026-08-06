@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/Skowronf/enterprise-platform
     targetRevision: main
-    path: gitops/argocd/resources/cluster-issuer
+    path: gitops/argocd/bootstrap/cluster-issuer.yml
 
   destination:
     server: https://kubernetes.default.svc
