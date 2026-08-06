@@ -33,15 +33,11 @@ echo "Argo CD admin password:"
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d
 
-echo "Applying applications"
-
 echo "Applying ArgoCD Applications"
 
-kubectl apply -f gitops/applications/cert-manager.yml
-kubectl apply -f gitops/applications/argo-rollouts.yml
-kubectl apply -f gitops/applications/observability.yml
-kubectl apply -f gitops/applications/petclinic.yml
-kubectl apply -f gitops/applications/ingress-nginx.yml
+kubectl apply -f gitops/argocd/applications/
+
+kubectl apply -f gitops/argocd/bootstrap/cluster-issuer.yml
 
 echo "Waiting for cert-manager CRDs"
 
@@ -80,34 +76,6 @@ echo "Waiting for cert-manager webhook CA injection"
 
 until kubectl get validatingwebhookconfiguration cert-manager-webhook \
   -o jsonpath='{.webhooks[0].clientConfig.caBundle}' | grep -q .; do
-  sleep 5
-done
-
-echo "Applying cert-manager resources"
-
-until kubectl apply -f gitops/applications/cluster-issuer.yml; do
-  echo "Waiting for cluster issuer..."
-  sleep 5
-done
-
-until kubectl apply -f gitops/applications/argo-certificate.yml; do
-  echo "Waiting for argo certificate..."
-  sleep 5
-done
-
-until kubectl apply -f gitops/applications/petclinic-certificate.yml; do
-  echo "Waiting for petclinic certificate..."
-  sleep 5
-done
-
-until kubectl apply -f gitops/applications/grafana-certificate.yml; do
-  echo "Waiting for grafana certificate..."
-  sleep 5
-done
-
-
-until kubectl apply -f gitops/applications/prometheus-certificate.yml; do
-  echo "Waiting for prometheus certificate..."
   sleep 5
 done
 

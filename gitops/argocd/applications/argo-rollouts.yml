@@ -6,8 +6,7 @@ metadata:
   namespace: argocd
 
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
-    # Rollouts controller must exist before applications create Rollout resources.
+    argocd.argoproj.io/sync-wave: "-10"
 
 spec:
 

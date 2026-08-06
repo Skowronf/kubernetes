@@ -1,18 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: observability
+  name: petclinic
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "10" # Deploy observability first so platform components are monitored from the start.
-
+    argocd.argoproj.io/sync-wave: "20" 
 spec:
   project: default
 
   source:
     repoURL: https://github.com/Skowronf/enterprise-platform
     targetRevision: main
-    path: charts/petclinic-platform/charts/observability
+    path: charts/petclinic-platform/charts/petclinic
 
     helm:
       valueFiles:
@@ -20,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: observability
+    namespace: petclinic
 
   syncPolicy:
     automated:
@@ -29,5 +28,3 @@ spec:
 
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
-      - Replace=true

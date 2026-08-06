@@ -5,8 +5,7 @@ metadata:
   name: ingress-nginx
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "30" # Deploy ingress-nginx after applications and databases so that they can be exposed to the outside world.
-
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
 
