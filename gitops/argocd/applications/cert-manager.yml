@@ -6,8 +6,7 @@ metadata:
   namespace: argocd
 
   annotations:
-    argocd.argoproj.io/sync-wave: "40" # Deploy cert-manager last to ensure that all workloads are running and can request TLS certificates.
-
+    argocd.argoproj.io/sync-wave: "-20"
 spec:
 
   project: default
