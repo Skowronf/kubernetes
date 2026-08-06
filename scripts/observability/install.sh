@@ -95,16 +95,16 @@ until kubectl apply -f gitops/applications/argo-certificate.yml; do
   sleep 5
 done
 
+until kubectl apply -f gitops/applications/petclinic-certificate.yml; do
+  echo "Waiting for petclinic certificate..."
+  sleep 5
+done
 
 until kubectl apply -f gitops/applications/grafana-certificate.yml; do
   echo "Waiting for grafana certificate..."
   sleep 5
 done
 
-until kubectl apply -f gitops/applications/petclinic-certificate.yml; do
-  echo "Waiting for petclinic certificate..."
-  sleep 5
-done
 
 until kubectl apply -f gitops/applications/prometheus-certificate.yml; do
   echo "Waiting for prometheus certificate..."
