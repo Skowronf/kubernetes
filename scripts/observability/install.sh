@@ -4,7 +4,8 @@ set -euo pipefail
 
 echo "Creating argocd namespace"
 
-kubectl create namespace argocd
+kubectl create namespace argocd \
+  --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Installing Argo CD"
 
@@ -19,7 +20,7 @@ kubectl wait \
   --for=condition=available \
   deployment/argocd-server \
   -n argocd \
-  --timeout=180s
+  --timeout=280s
 
 echo "Patching Argo CD to allow insecure connections"
 kubectl patch deployment argocd-server -n argocd --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--insecure"}]'
