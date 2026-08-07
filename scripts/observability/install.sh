@@ -26,7 +26,7 @@ kubectl patch deployment argocd-server -n argocd --type=json -p='[{"op":"add","p
 
 echo "Creating Argo CD ingress"
 
-kubectl apply -f bootstrap/kind/argocd-ingress.yml
+kubectl apply -f bootstrap/argocd/argocd-ingress.yml
 
 echo "Argo CD admin password:"
 
