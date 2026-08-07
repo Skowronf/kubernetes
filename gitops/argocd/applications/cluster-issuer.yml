@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/Skowronf/enterprise-platform
     targetRevision: main
-    path: gitops/argocd/bootstrap
+    path: bootstrap/cert-manager/cluster-issuer.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
