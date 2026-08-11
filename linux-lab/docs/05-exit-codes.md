@@ -1,213 +1,243 @@
-# Linux Fundamentals — Exit Codes
+# Linux Fundamentals — Redirections & Pipes
 
 ## Goal
 
-I learned how Linux processes communicate success or failure using **exit codes**, and how Bash uses them for automation and control flow.
+I learned how Linux processes communicate using **stdin, stdout and stderr**, and how Bash redirects and connects these streams.
 
 I focused on:
 
-* exit codes,
-* `$?`,
-* `exit`,
-* `return`,
-* `&&` / `||`,
-* `if`,
-* exit codes and signals.
+* `stdin`, `stdout`, `stderr`
+* file descriptors `0`, `1`, `2`
+* `>`, `>>`, `2>`, `2>>`, `<`
+* `2>&1`
+* pipes `|`
+* `/dev/null`
 
 ---
 
-## 1. Exit Codes
+## 1. Standard Streams
 
-Every process terminates with an exit status.
+Every process has:
 
 ```text
-0        → success
-non-zero → failure or another condition
+stdin  → input
+stdout → normal output
+stderr → errors / diagnostics
+```
+
+File descriptors:
+
+```text
+0 → stdin
+1 → stdout
+2 → stderr
+```
+
+By default:
+
+```text
+stdin  → terminal
+stdout → terminal
+stderr → terminal
+```
+
+---
+
+## 2. Basic Redirections
+
+```bash
+command > output.log
+```
+
+→ stdout → file, **overwrite**
+
+```bash
+command >> output.log
+```
+
+→ stdout → file, **append**
+
+```bash
+command 2> error.log
+```
+
+→ stderr → file, **overwrite**
+
+```bash
+command 2>> error.log
+```
+
+→ stderr → file, **append**
+
+```bash
+command < input.txt
+```
+
+→ file → stdin
+
+---
+
+## 3. stdout + stderr
+
+```bash
+command > output.log 2>&1
+```
+
+→ both go to `output.log`
+
+```text
+stdout → output.log
+stderr → output.log
+```
+
+`2>&1` means:
+
+> stderr → current destination of stdout
+
+---
+
+## 4. Order Matters
+
+These are different:
+
+```bash
+command > output.log 2>&1
+```
+
+```text
+stdout → output.log
+stderr → output.log
+```
+
+and:
+
+```bash
+command 2>&1 > output.log
+```
+
+```text
+stdout → output.log
+stderr → terminal
+```
+
+Why?
+
+```text
+Bash processes redirections from left to right.
+```
+
+---
+
+## 5. Pipes
+
+```bash
+command1 | command2
+```
+
+means:
+
+```text
+command1 stdout → command2 stdin
 ```
 
 Example:
 
 ```bash
-true
-echo $?
+cat application.log | grep ERROR
 ```
 
-→ `0`
-
-```bash
-false
-echo $?
+```text
+cat stdout → pipe → grep stdin
+grep stdout → terminal
 ```
 
-→ `1`
+`stderr` is **not automatically piped**.
 
----
-
-## 2. `$?`
-
-`$?` contains the exit status of the **previous command**.
-
-It is overwritten by the next command:
+To include stderr:
 
 ```bash
-false
-echo "hello"
-echo $?
-```
-
-→ `0`
-
-To preserve it:
-
-```bash
-false
-status=$?
+command1 2>&1 | command2
 ```
 
 ---
 
-## 3. `exit` vs `return`
+## 6. `/dev/null`
 
 ```bash
-exit 1
+command > /dev/null
 ```
 
-terminates the entire script with exit code `1`.
+→ discard stdout
 
 ```bash
-return 1
+command 2> /dev/null
 ```
 
-returns from a function.
-
-```text
-return → leave function
-exit   → terminate script
-```
-
----
-
-## 4. `if`, `&&`, `||`
-
-Bash uses exit codes for control flow.
+→ discard stderr
 
 ```bash
-if command; then
-    echo "success"
-else
-    echo "failure"
-fi
+command > /dev/null 2>&1
 ```
 
-```bash
-command1 && command2
-```
-
-→ run `command2` only if `command1` succeeds.
-
-```bash
-command1 || command2
-```
-
-→ run `command2` if `command1` returns non-zero.
-
----
-
-## 5. Non-zero Doesn't Always Mean Error
-
-Commands can use non-zero exit codes for different meanings.
-
-For `grep`:
-
-```text
-0 → match found
-1 → no match
-2 → error
-```
-
-Therefore:
-
-```text
-non-zero ≠ always "something went wrong"
-```
-
-I need to understand the exit-code semantics of the specific command.
-
----
-
-## 6. Exit Codes & Signals
-
-A commonly observed convention is:
-
-```text
-128 + signal number
-```
-
-For example:
-
-```text
-SIGTERM (15) → 143
-SIGKILL (9)  → 137
-```
-
-In Kubernetes, `137` can commonly indicate an OOM kill.
+→ discard stdout + stderr
 
 ---
 
 ## 7. Production Relevance
 
-Exit codes are fundamental to:
+These concepts are used constantly in:
 
-* Bash scripts,
-* CI/CD,
-* Docker,
-* Kubernetes Jobs,
-* container restarts,
-* deployment automation,
-* troubleshooting.
+* Bash scripts
+* CI/CD
+* Docker
+* Kubernetes
+* logging
+* troubleshooting
 
-The basic flow is:
+Example:
+
+```bash
+./deploy.sh > deploy.log 2> deploy-error.log
+```
 
 ```text
-process
-   ↓
-exit code
-   ↓
-shell
-   ↓
-CI/CD / Docker / Kubernetes
-   ↓
-automation decision
+stdout → deploy.log
+stderr → deploy-error.log
 ```
 
-## Key Takeaways
+---
+
+# Key Takeaways
 
 ```text
-0        → success
-non-zero → another condition / failure
+0 → stdin
+1 → stdout
+2 → stderr
+```
+
+```text
+>    → overwrite stdout
+>>   → append stdout
+2>   → overwrite stderr
+2>>  → append stderr
+<    → redirect stdin
 ```
 
 ```bash
-$?
+2>&1
 ```
 
-→ previous command's exit status.
+→ stderr gets the **current destination of stdout**.
 
 ```bash
-exit N
+command1 | command2
 ```
 
-→ terminate script with status `N`.
-
-```bash
-return N
-```
-
-→ return from function.
+→ stdout of `command1` becomes stdin of `command2`.
 
 Most important:
 
 ```text
-exit codes are signals for automation,
-not just error numbers.
+Redirection → changes where a stream goes.
+Pipe        → connects stdout of one process to stdin of another.
 ```
