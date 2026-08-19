@@ -9,7 +9,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/Skowronf/enterprise-platform
+    repoURL: https://github.com/Skowronf/kubernetes
     targetRevision: main
     path: charts/petclinic-platform/charts/observability
 
