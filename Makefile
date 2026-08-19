@@ -7,8 +7,6 @@ cluster:
 deploy:
 	./scripts/deploy.sh
 
-port-forward:
-	./scripts/port-forward.sh
 
 smoke-test:
 	./scripts/smoke-test.sh
