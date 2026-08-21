@@ -55,7 +55,18 @@ if [ "$KUBE_AVAILABLE" -eq 0 ]; then
     echo
     echo "=== Services ==="
 
-    if kubectl get services -n petclinic; then
+    if kubectl get services -n petclinic -o json | 
+    jq -r '
+    .items[] |
+    [
+        .metadata.name,
+        .spec.type,
+        .spec.clusterIP,
+        (.spec.ports[0].port | tostring)
+    ] |
+    @tsv
+    ' |
+    column -t; then
         echo "OK: Kubernetes petclinic services retrieved successfully"
     else
         HEALTHY=1
