@@ -1,5 +1,3 @@
-source ./scripts/env.sh
-
 set -euo pipefail
 
 cd ui-tests || exit

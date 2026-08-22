@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-source ./scripts/env.sh
-
 
 echo "Installing Cilium with kube-proxy replacement enabled" 
 cilium install \
