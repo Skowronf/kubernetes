@@ -49,7 +49,7 @@ loki:
     replicas: 0
 
   lokiCanary:
-    enabled: false
+    enabled: true
 
   chunksCache:
     enabled: false
