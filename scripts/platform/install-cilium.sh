@@ -11,11 +11,3 @@ cilium install \
 
 echo "Waiting for Cilium to be ready"
 cilium status --wait
-
-
-echo "Creating petclinic namespace"
-kubectl create namespace petclinic --dry-run=client -o yaml | kubectl apply -f -
-
-
-echo "Applying default deny NetworkPolicy"
-kubectl apply -f policy/deny-all.yml
