@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-./scripts/cluster.sh
-./scripts/install-cilium.sh
-./scripts/create-registry-credentials.sh
-./scripts/install-argocd.sh
-./scripts/configure-argocd.sh
-./scripts/bootstrap-gitops.sh
-./scripts/bootstrap-certificates.sh
-./scripts/create-local-ca-secret.sh
-./scripts/verify-gitops.sh
-./scripts/smoke-test.sh
+echo "=== Platform bootstrap ==="
 
-echo "Done"
+./scripts/platform/cluster.sh
+./scripts/platform/install-cilium.sh
+./scripts/platform/create-registry-credentials.sh
+./scripts/platform/install-argocd.sh
+./scripts/platform/configure-argocd.sh
+./scripts/platform/bootstrap-certificates.sh
+./scripts/platform/create-local-ca-secret.sh
+
+echo "=== GitOps bootstrap ==="
+
+./scripts/gitops/bootstrap.sh
+
+echo "=== Verification ==="
+
+./scripts/gitops/verify.sh
+
+echo "=== Application tests ==="
+
+./scripts/tests/smoke-test.sh
+
+echo "Bootstrap completed successfully"
+
