@@ -48,6 +48,18 @@ loki:
   backend:
     replicas: 0
 
+  lokiCanary:
+    enabled: false
+
+  chunksCache:
+    enabled: false
+
+  resultsCache:
+    enabled: false
+
+  gateway:
+    enabled: false
+
   loki:
 
     auth_enabled: false
