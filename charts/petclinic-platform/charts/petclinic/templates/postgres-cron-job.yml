@@ -52,7 +52,10 @@ spec:
                   value: petclinic
 
                 - name: POSTGRES_PASSWORD
-                  value: petclinic
+                  valueFrom:
+                    secretKeyRef:
+                      name: petclinic-secret
+                      key: POSTGRES_PASSWORD
 
               volumeMounts:
                 - name: backup
