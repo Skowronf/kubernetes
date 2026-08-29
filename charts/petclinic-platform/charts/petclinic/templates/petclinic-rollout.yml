@@ -90,10 +90,6 @@ spec:
 
           image: postgres:16
 
-          envFrom:
-            - secretRef:
-                name: petclinic-secret
-
           command:
             - sh
             - -c
@@ -158,6 +154,13 @@ spec:
 
             - configMapRef:
                 name: petclinic-config
+
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: petclinic-secret
+                  key: SPRING_DATASOURCE_PASSWORD
 
 
           readinessProbe:
