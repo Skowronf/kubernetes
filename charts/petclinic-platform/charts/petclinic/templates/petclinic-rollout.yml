@@ -156,11 +156,11 @@ spec:
                 name: petclinic-config
 
           env:
-            - name: SPRING_DATASOURCE_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: petclinic-secret
-                  key: SPRING_DATASOURCE_PASSWORD
+                  key: POSTGRES_PASSWORD
 
 
           readinessProbe:

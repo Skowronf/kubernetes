@@ -35,7 +35,10 @@ spec:
               value: petclinic
 
             - name: POSTGRES_PASSWORD
-              value: petclinic
+              valueFrom:
+                secretKeyRef:
+                  name: petclinic-secret
+                  key: POSTGRES_PASSWORD
 
 
           readinessProbe: # Service sends traffic only when PostgreSQL is ready
