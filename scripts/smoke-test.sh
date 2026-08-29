@@ -4,7 +4,7 @@ set -e
 
 echo "Checking PetClinic..."
 
-curl -f http://petclinic.local/
+curl -f https://petclinic.local/
 
 
 echo "PetClinic is reachable"

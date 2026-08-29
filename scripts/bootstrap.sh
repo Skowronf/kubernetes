@@ -10,7 +10,6 @@ set -euo pipefail
 ./scripts/bootstrap-certificates.sh
 ./scripts/create-local-ca-secret.sh
 ./scripts/verify-gitops.sh
-#./scripts/observability/install.sh
 ./scripts/smoke-test.sh
 
 echo "Done"
