@@ -15,6 +15,7 @@ This platform simulates a real-world internal developer platform:
 - **Automation Layer** → Bash scripts + CI/CD ready structure
 - **Networking Layer** → Cilium + Network Policy
 - **TLS Layer** → Cert-Manager + mkcert
+- **Ingress** → Nginx ingress controller
 
 ---
 
