@@ -1,10 +1,10 @@
-#  Enterprise Platform (Spring PetClinic)
+# Enterprise Platform (Spring PetClinic)
 
 A cloud-native **Platform Engineering + DevSecOps + GitOps showcase project** built on top of the Spring PetClinic application.
 
 ---
 
-##  Architecture Overview
+## Architecture Overview
 
 This platform simulates a real-world internal developer platform:
 
@@ -13,44 +13,21 @@ This platform simulates a real-world internal developer platform:
 - **Delivery Layer** → GitOps (ArgoCD)
 - **Observability Layer** → Prometheus + Grafana + Loki
 - **Automation Layer** → Bash scripts + CI/CD ready structure
+- **Networking Layer** → Cilium + Network Policy
+- **TLS Layer** → Cert-Manager + mkcert
 
 ---
 
-##  Architecture Decisions
+## Architecture Decisions
 
 All major design decisions are documented in ADR format:
 
-- Kubernetes vs VM deployment
-- Helm chart structure
-- GitOps approach (ArgoCD)
-- Observability stack selection
-
-### Platform Engineering
-- Kubernetes-native deployment model
-- Helm-based application packaging
-- Separation of application and platform concerns
-
-### GitOps (ArgoCD)
-- Declarative cluster state
-- Version-controlled deployments
-- Automated reconciliation of infrastructure
-
-### Observability Stack
-- Metrics → Prometheus
-- Dashboards → Grafana
-- Logs → Loki
-
-
-### DevSecOps Ready (extensible)
-- Kubernetes-native configuration (ConfigMaps & Secrets)
-- ADR-driven architecture decisions
-- Ready for security scanning & policy-as-code
-
 ## CI/CD Pipeline
 
-This project is designed to be CI/CD-ready.
+This project is CI/CD-ready.
 
-### Typical flow:
+### Typical flow
+
 1. Build application
 2. Build Docker image
 3. Scan image (security)
@@ -58,14 +35,15 @@ This project is designed to be CI/CD-ready.
 
 ---
 
-##  Deployment Flow
+## Deployment Flow
 
 ### 1. Bootstrap environment
+
+From repository root
 
 ```bash
 ./scripts/bootstrap.sh
 ```
-
 
 # Debugging Cheat Sheet (Kubernetes / GitOps / Observability)
 
@@ -124,5 +102,3 @@ helm get all <release> # Displays full information about a release (manifests, v
 helm template <chart> # Renders Kubernetes manifests locally without installing
 helm lint <chart> # Validates Helm chart for syntax and best practices
 ```
-
-
