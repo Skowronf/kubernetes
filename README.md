@@ -4,6 +4,9 @@ A cloud-native **Platform Engineering + DevSecOps + GitOps showcase project** bu
 
 ---
 
+<img width="1935" height="1213" alt="image" src="https://github.com/user-attachments/assets/09eef951-f14c-4b04-a3d4-ea82bd5317dc" />
+
+
 ## Architecture Overview
 
 This platform simulates a real-world internal developer platform:
