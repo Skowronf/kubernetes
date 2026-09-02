@@ -5,6 +5,6 @@ set -euo pipefail
 echo "Applying Argo CD Applications"
 
 kubectl apply \
-  -f gitops/argocd/applications/
+  -f gitops/applications/
 
 echo "Argo CD Applications applied"
