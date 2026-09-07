@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: petclinic
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "20" 
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Skowronf/kubernetes
+    targetRevision: main
+    path: charts/petclinic-platform/charts/petclinic
+
+    helm:
+      valueFiles:
+        - aws-values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: petclinic
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
