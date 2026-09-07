@@ -1,3 +1,4 @@
+{{- if .Values.postgres.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,3 +8,4 @@ data:
   SPRING_PROFILES_ACTIVE: "postgres"
   SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/petclinic"
   SPRING_DATASOURCE_USERNAME: "petclinic"
+{{- end }}

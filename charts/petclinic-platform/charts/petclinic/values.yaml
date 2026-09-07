@@ -11,3 +11,5 @@ resources:
   limits: # Maximum resources the container can use before being throttled (CPU) or OOMKilled (memory)
     cpu: 1000m
     memory: 1Gi
+postgres:
+  enabled: true
