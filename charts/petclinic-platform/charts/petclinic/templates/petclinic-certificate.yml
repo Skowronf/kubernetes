@@ -16,4 +16,4 @@ spec:
 
   dnsNames:
     - petclinic.local
-{{- if .Values.certificate.enabled }}
+{{- end }}
