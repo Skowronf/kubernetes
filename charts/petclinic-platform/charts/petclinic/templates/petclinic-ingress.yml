@@ -9,14 +9,18 @@ metadata:
     app: petclinic
   namespace: petclinic
   annotations:
+    {{- if .Values.certificate.enabled }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
 
 spec:
   ingressClassName: nginx
+  {{- if .Values.certificate.enabled }}
   tls:
     - hosts:
         - petclinic.local
       secretName: petclinic-tls
+  {{- end }}
 
   rules:
   - host: petclinic.local

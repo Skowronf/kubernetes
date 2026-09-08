@@ -20,6 +20,9 @@ resources:
 postgres:
   enabled: false
 
+certificate:
+  enabled: false
+
 database:
   externalSecret:
     enabled: true

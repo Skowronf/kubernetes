@@ -1,3 +1,4 @@
+{{- if .Values.certificate.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 
@@ -15,3 +16,4 @@ spec:
 
   dnsNames:
     - petclinic.local
+{{- if .Values.certificate.enabled }}
