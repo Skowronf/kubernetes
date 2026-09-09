@@ -1,0 +1,17 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: petclinic-allow-rds
+  namespace: petclinic
+spec:
+  endpointSelector:
+    matchLabels:
+      app: petclinic
+  egress:
+    - toCIDR:
+    # hardcoded for now, but should be replaced with a variable from values.yaml
+        - 10.0.11.64/32
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
