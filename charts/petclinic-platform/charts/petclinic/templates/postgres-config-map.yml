@@ -8,8 +8,6 @@ data:
 
   {{- if .Values.postgres.enabled }}
   SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/petclinic"
-  {{- else }}
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ .Values.database.host }}:5432/petclinic"
   {{- end }}
 
   SPRING_DATASOURCE_USERNAME: "petclinic"

@@ -169,6 +169,13 @@ spec:
                 secretKeyRef:
                   name: petclinic-secret
                   key: POSTGRES_PASSWORD
+            {{- if .Values.database.externalSecret.enabled }}
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: petclinic-database
+                  key: host
+            {{- end }}
 
           startupProbe:
             httpGet:
