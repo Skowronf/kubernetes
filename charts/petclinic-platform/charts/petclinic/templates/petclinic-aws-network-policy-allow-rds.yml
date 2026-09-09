@@ -8,9 +8,13 @@ spec:
     matchLabels:
       app: petclinic
   egress:
+    # For now - Allow egress to WHOLE private subnet to reach RDS instance. 
+    # In future, we can restrict it to RDS instance only.
+    # Coudnt find a way to do it with CiliumNetworkPolicy
+    # Cannot use external secret to get pass value of RDS instance endpoint and use it in the cilium policy.
     - toCIDR:
-    # hardcoded for now, but should be replaced with a variable from values.yaml
-        - 10.0.11.64/32
+        - 10.0.10.0/24
+        - 10.0.11.0/24
       toPorts:
         - ports:
             - port: "5432"
