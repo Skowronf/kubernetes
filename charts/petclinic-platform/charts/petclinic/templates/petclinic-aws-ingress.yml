@@ -1,0 +1,37 @@
+{{- if .Values.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: petclinic-alb
+  namespace: petclinic
+
+  annotations:
+    # Create an internet-facing AWS Application Load Balancer.
+
+    alb.ingress.kubernetes.io/scheme: internet-facing
+
+    # Use IP targets so the ALB sends traffic directly to pods.
+    # Ip created by AWS VPC CNI
+    alb.ingress.kubernetes.io/target-type: ip
+
+    # Listen on HTTP for now.
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+
+spec:
+  # Use AWS Load Balancer Controller instead of nginx.
+  ingressClassName: alb
+
+  rules:
+    - host: petclinic.local
+
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+
+            backend:
+              service:
+                name: petclinic-stable
+                port:
+                  number: 8080
+{{- end }}

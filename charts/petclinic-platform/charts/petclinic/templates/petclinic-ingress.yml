@@ -1,3 +1,4 @@
+{{- if not .Values.aws.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 # Ingress is a way to expose HTTP and HTTPS routes from 
@@ -9,18 +10,14 @@ metadata:
     app: petclinic
   namespace: petclinic
   annotations:
-    {{- if .Values.certificate.enabled }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    {{- end }}
 
 spec:
   ingressClassName: nginx
-  {{- if .Values.certificate.enabled }}
   tls:
     - hosts:
         - petclinic.local
       secretName: petclinic-tls
-  {{- end }}
 
   rules:
   - host: petclinic.local
@@ -33,3 +30,4 @@ spec:
             name: petclinic-stable
             port:
               number: 8080
+{{- end }}

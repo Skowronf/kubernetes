@@ -19,6 +19,9 @@ resources:
 postgres:
   enabled: false
 
+aws:
+  enabled: true
+
 certificate:
   enabled: false
 
