@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-alb
+  namespace: petclinic
+spec:
+  # Apply this rule only to Petclinic application pods
+  podSelector:
+    matchLabels:
+      app: petclinic
+
+  policyTypes:
+    - Ingress
+
+  ingress:
+    # Allow traffic coming from the VPC
+    - from:
+        - ipBlock:
+            cidr: 10.0.0.0/16
+
+      # ALB forwards traffic directly to pod port 8080
+      ports:
+        - protocol: TCP
+          port: 8080
