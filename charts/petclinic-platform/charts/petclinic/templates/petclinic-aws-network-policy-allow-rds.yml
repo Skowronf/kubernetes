@@ -1,3 +1,4 @@
+{{- if not .Values.postgres.enabled }}
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -19,3 +20,4 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
+{{- end }}
