@@ -16,11 +16,18 @@ spec:
       stableService: petclinic-stable
       canaryService: petclinic-canary
       trafficRouting:
+        {{- if .Values.aws.enabled }}
+        alb:
+          ingress: petclinic-alb
+          servicePort: 8080
+        {{- else }}
         nginx:
-          stableIngress: petclinic # name of existing Ingress, managed by Argo Rollouts
+          # name of existing Ingress, managed by Argo Rollouts
           # Existing stable Ingress managed by Argo Rollouts.
           # Rollouts will automatically create/update a Canary Ingress
           # and adjust traffic weights during deployment.
+          stableIngress: petclinic
+        {{- end }}
 
       steps:
         - setWeight: 20
