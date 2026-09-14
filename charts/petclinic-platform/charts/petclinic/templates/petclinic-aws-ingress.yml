@@ -22,7 +22,7 @@ spec:
   ingressClassName: alb
 
   rules:
-    - host: petclinic.local
+    - host: petclinic.aws
 
       http:
         paths:
