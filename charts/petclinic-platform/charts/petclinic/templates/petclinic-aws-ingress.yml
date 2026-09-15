@@ -20,6 +20,9 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
 
+   # Use external-dns to create a DNS record for the ALB.
+    external-dns.alpha.kubernetes.io/hostname: petclinic.website
+
 
 spec:
   # Use AWS Load Balancer Controller instead of nginx.
