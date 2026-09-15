@@ -9,20 +9,24 @@ metadata:
     # Create an internet-facing AWS Application Load Balancer.
 
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:066496973881:certificate/eba20519-53af-4f73-95e6-26f62595468b"
+
 
     # Use IP targets so the ALB sends traffic directly to pods.
     # Ip created by AWS VPC CNI
     alb.ingress.kubernetes.io/target-type: ip
 
-    # Listen on HTTP for now.
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    # Listen on HTTP and HTTPS for now.
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+
 
 spec:
   # Use AWS Load Balancer Controller instead of nginx.
   ingressClassName: alb
 
   rules:
-    - host: petclinic.aws
+    - host: petclinic.website
 
       http:
         paths:
