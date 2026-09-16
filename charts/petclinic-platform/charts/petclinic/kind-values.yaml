@@ -1,0 +1,8 @@
+imagePullSecrets:
+  - name: ghcr-secret
+
+postgres:
+  enabled: true
+
+certificate:
+  enabled: true

@@ -15,7 +15,7 @@ spec:
 
     helm:
       valueFiles:
-        - values.yaml
+        - kind-values.yaml
 
   destination:
     server: https://kubernetes.default.svc
