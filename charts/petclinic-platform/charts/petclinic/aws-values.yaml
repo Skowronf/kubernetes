@@ -1,3 +1,6 @@
+postgres:
+  enabled: false
+
 aws:
   enabled: true
 
