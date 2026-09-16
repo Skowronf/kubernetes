@@ -24,6 +24,12 @@ spec:
         registry: txt
         txtOwnerId: petclinic-eks
 
+        managedRecordTypes:
+          - A
+          - AAAA
+          - CNAME
+          - TXT
+
         domainFilters:
           - petclinic.website
 
