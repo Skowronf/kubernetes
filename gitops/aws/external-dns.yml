@@ -25,6 +25,7 @@ spec:
 
         registry: txt
         txtOwnerId: petclinic-eks
+        txtPrefix: external-dns-
 
         domainFilters:
           - petclinic.website
