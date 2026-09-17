@@ -13,6 +13,8 @@ spec:
 
     helm:
       values: |
+        logLevel: debug
+
         provider:
           name: aws
 
