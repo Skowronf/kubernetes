@@ -34,9 +34,6 @@ spec:
         extraArgs:
           ingress-class: alb
           aws-zone-type: public
-          managed-record-types: A
-          managed-record-types: AAAA
-          managed-record-types: TXT
 
         triggerLoopOnEvent: true
 
