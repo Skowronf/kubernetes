@@ -34,6 +34,7 @@ spec:
         extraArgs:
           ingress-class: alb
           aws-zone-type: public
+          log-level: debug
 
         triggerLoopOnEvent: true
 
