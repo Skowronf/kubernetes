@@ -6,3 +6,6 @@ postgres:
 
 certificate:
   enabled: true
+
+aws:
+  enabled: false
