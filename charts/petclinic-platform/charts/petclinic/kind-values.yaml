@@ -9,3 +9,7 @@ certificate:
 
 aws:
   enabled: false
+
+database:
+  externalSecret:
+    enabled: false
