@@ -6,7 +6,7 @@ imagePullSecrets:
 postgres:
   enabled: true
 
-certificate:
+localCertificate:
   enabled: true
 
 aws:

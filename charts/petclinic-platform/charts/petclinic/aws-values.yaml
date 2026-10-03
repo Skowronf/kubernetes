@@ -6,9 +6,6 @@ postgres:
 aws:
   enabled: true
 
-certificate:
-  enabled: false
-
 database:
   externalSecret:
     enabled: true

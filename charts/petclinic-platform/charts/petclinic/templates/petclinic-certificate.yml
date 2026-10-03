@@ -1,4 +1,4 @@
-{{- if .Values.certificate.enabled }}
+{{- if .Values.localCertificate.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 
