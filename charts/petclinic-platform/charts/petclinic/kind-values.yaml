@@ -9,9 +9,6 @@ postgres:
 localCertificate:
   enabled: true
 
-aws:
-  enabled: false
-
 database:
   externalSecret:
     enabled: false
