@@ -1,8 +1,5 @@
 # TODO find a better way to handle env specific value
 # Since they are duplicated in other values files
-postgres:
-  enabled: false
-
 aws:
   enabled: true
 

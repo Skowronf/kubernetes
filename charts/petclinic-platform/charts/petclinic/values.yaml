@@ -17,3 +17,6 @@ localCertificate:
 
 aws:
   enabled: false
+
+postgres:
+  enabled: false
