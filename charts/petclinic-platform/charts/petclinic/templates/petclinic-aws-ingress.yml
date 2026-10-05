@@ -11,7 +11,6 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:eu-central-1:066496973881:certificate/eba20519-53af-4f73-95e6-26f62595468b"
 
-
     # Use IP targets so the ALB sends traffic directly to pods.
     # Ip created by AWS VPC CNI
     alb.ingress.kubernetes.io/target-type: ip

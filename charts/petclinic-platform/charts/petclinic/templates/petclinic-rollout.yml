@@ -77,10 +77,8 @@ spec:
         # Ensure mounted volumes are accessible by the application group.
         fsGroup: 20001
 
-
       imagePullSecrets:
         {{- toYaml .Values.imagePullSecrets | nindent 8 }}
-
 
       volumes:
 
@@ -123,7 +121,6 @@ spec:
 
         - name: petclinic
 
-
           securityContext:
 
             # Prevent processes inside the container from gaining
@@ -142,16 +139,13 @@ spec:
             # Prevents modification of binaries and system files at runtime.
             readOnlyRootFilesystem: true
 
-
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
 
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 
-
           imagePullPolicy: Always
-
 
           ports:
 
@@ -163,7 +157,6 @@ spec:
             # Writable temporary directory required by JVM/Spring Boot.
             - name: tmp
               mountPath: /tmp
-
 
           envFrom:
 
