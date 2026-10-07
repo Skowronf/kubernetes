@@ -6,5 +6,4 @@ echo "Checking PetClinic..."
 
 curl -f https://petclinic.local/
 
-
 echo "PetClinic is reachable"
