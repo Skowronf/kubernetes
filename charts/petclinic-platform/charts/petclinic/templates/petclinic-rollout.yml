@@ -127,13 +127,11 @@ spec:
             # additional privileges.
             allowPrivilegeEscalation: false
 
-
             # Remove all Linux capabilities that are not required.
             # The application runs with the minimum required permissions.
             capabilities:
               drop:
                 - ALL
-
 
             # Make the container root filesystem read-only.
             # Prevents modification of binaries and system files at runtime.
@@ -142,7 +140,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
-
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 
           imagePullPolicy: Always
@@ -150,7 +147,6 @@ spec:
           ports:
 
             - containerPort: 8080
-
 
           volumeMounts:
 
