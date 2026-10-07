@@ -92,9 +92,6 @@ loki:
   minio:
     enabled: false
 
-
-
-
 promtail:
 
   enabled: true
@@ -104,7 +101,6 @@ promtail:
     clients:
 
       - url: http://observability-loki.observability:3100/loki/api/v1/push
-
 
     snippets:
 
@@ -153,7 +149,6 @@ promtail:
 
               target_label: __path__
 
-
   resources:
 
     requests:
@@ -163,8 +158,7 @@ promtail:
     limits:
       cpu: 200m
       memory: 256Mi
-
-
+      
 
 grafana:
   adminUser: admin
