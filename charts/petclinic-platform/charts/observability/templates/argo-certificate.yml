@@ -6,9 +6,7 @@ metadata:
   namespace: argocd
 
 spec:
-
   secretName: argocd-tls
-
   issuerRef:
     name: local-ca
     kind: ClusterIssuer
