@@ -6,7 +6,7 @@ metadata:
   namespace: petclinic
 
 spec:
-  schedule: "0 */4 * * *" # every 4 hours
+  schedule: "0 */5 * * *" # every 5 hours
   concurrencyPolicy: Forbid
 
   jobTemplate:
@@ -74,3 +74,4 @@ spec:
               persistentVolumeClaim:
                 claimName: postgres-backups
 {{- end }}
+
